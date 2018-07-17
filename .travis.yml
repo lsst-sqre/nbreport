@@ -1,0 +1,34 @@
+sudo: false
+language: python
+matrix:
+  include:
+    # Use the Python 3.6 build for PyPI deployments and doc uploads
+    - python: "3.6"
+      env: PYPI_DEPLOY=true LTD_SKIP_UPLOAD=false
+install:
+  - "pip install -e .[dev]"
+  - "pip install ltd-conveyor"
+script:
+  - "python setup.py test"
+  - "cd docs && make linkcheck && make html && cd ../"
+after_success:
+  - 'ltd upload --product nbreport --travis --dir docs/_build/html'
+env:
+  global:
+    - PYPI_DEPLOY=false  # disable PyPI pushes in regular matrix
+    - LTD_SKIP_UPLOAD=true  # disable doc uploads by default
+    # LSST the Docs credentials
+    - secure: "MExto5fmqjQlAjdkp1ePP4Hm3FLmduu25i1EmQEXvYfF1z3vX/CVuljZwxKbafTv60lywjCgOOBgW74XkFIk3ov96IxyleEMLLAgm/FRsR/kGL7YPXyqol7p/ef1PiNNy/yDxOtx+vuigTxkPASV/w2V8Ga4JVlu0ghQuHbHof9FTI3zGjFJRRCJnCUiQC9/dt0I1U4RK432JMbPPVSEoHBu3ZzpyWuON9AdEtbmnmfGxBMWILbgV3cH1C3xPWkfXqrWd7jBdGURRoj8yEwnpzp4UjWHKVMNnbILXT/zeqlSQNRnvvDiW4B7ep6kQPcb82MLZwtv5LuI6FFkgf+51FnX79hOVxsBo9oQIffAMP3PP4FJWeavcRv4ozJFsN89KdUAsPHoZjHbtvsf//1vUsH1/BeAb3B1pdjQF0aJeEyMVhx52GW6TRURbeSLBsZ0N7/ImkwKKPlw7Xs8m62ZrjQ/ChlBlt931kaej0hHd//8gFCIw5AdDfFfbsEkXZb8HoKJEfFB2Pv4Im/0rl5AeYTUXEeTi7MLnMXgJ/ZykzauTjF6bPYc5FyM3wgWtvcGb/n6te7bfViZmKQ1q3vVtdyXbcwgyoQKwX59mipFI1pifrd+0sxWCShkByfwWx8BRHjvCikxaFGrrxwCh1AbuOjRvAayhbuoAlvJ4yUGOhM="
+    - secure: "mpCAHIrRE5ZgkQtLAHrtY8Jxw2RGBPN2h8Vj0POhvSweQ5GeuxzOx/5KvxZQoevJNsR3qXQXsKrqRtQU80PsYo2A9bq8md85i/0SJp7U+qloEPhxSFP9su/XEHd+R+uf8I0bQXPIcnUWlWXcfzHWv7mGZoJiBSyB6ZjVs+4I3Gfwg44JzaFTsOiQ1Segxh/IleF1Tl1EaFkRMl9sfcPLDceA0nhJulRq0FnPOLlvLOYILqCCC+X146/5BdKse92jJzdyj+TXyA1WdeZBpIIKvI//L3wOqKUIVQal82+vvaKMgitQbnJS1scvoOZxZgAyGpDv0Q06QkRVlNpGPVh8SifXVyWVTQqdbqgI2Xy3ToQ+OFYOiDneuMokTfaINn17G4KWuRdz7Ea3rXv/IO3M0jj9PmCLyqOlP2N3PeprE82eoP1SFv48rA5F1aKrp23RVSTndrytq4+GlqWp3hhv1Pt4X2NM99QZ743bD+zCvLx2rL6Ql41m7m+aepfaQOwb/6oM6bSFdY6hG15zXbQ3v/qg2xFKARbEbR5dsVPRL0V7Iw1JulgqLreqchD1s2IdtTCmu90PJiKjQexILm+9LjoQhnAeIDxzxh1JWyZqmkE3rVdIyRWqNtG5xhsVJEvFLQO0a79BBYh3IOFGTA0aU9Bb1xr0/VpRWtSlti4QbSI="
+deploy:
+  provider: pypi
+  user: sqre-admin
+  skip_upload_docs: true
+  distributions: sdist bdist_wheel
+  password:
+    # PyPI deployment credentials for sqre-admin
+    secure: "asIlSsPvThfcyJi2llakOgcdWr6yo9SUXtxqReLEz6AZNpQbQAdT65MpMSGjNTJkELtJHuo0YUeISWxBEzh1+u2ltfg3zD/pbzNnpd0yz8Efxt/PBsfqu8ZCW9BfgfKMQaJAvM2CFNepTpHCqCaYoyOBscuuH3laLv7GyUwtmLmkAV8lB69mZvILt9DG9SVR9XwovhtoSdQ7FX5ByD1SvVHBXMd+FKd3tnRX45bPQFEys5XbpHujoTM7DfoJC7yQY+XLzRERo5YDad6ckuXVXjGpUyrfY9wQfFpZElkdcrXtl3FQVlXArf/iFXtBx+a3n2gZ+VkmH+uODP2O7Pj+v25sM7iW9OBhJqPyqqw7Din+f151p3QUEGKdv9gZTasypVnvP1Hem9Hf6e3RZM79bsSpHTTZnMX+MuPkY2GxGGQ0paJZjU9xaoja3n5gqhjKg09seJZ9y0021K0gqNsA+H7xvFRxmCO2BycVXSM2dNdPJcAg+yST56cWyoHbv03bnspPTz+KLojRG961lxrjuTldj3BkL2oqQIbDGVhJdoIqGg5CoO7AP4pNlNytB75FoIT7YfrCImQaaLBl2lRBWAaPfSJkPM1QSb5C5veaHTaisQkp8a6tE/vAA+0x3iKUzDjZbV5bE+MXAnv9xiOP9kUPkCHpnlnTMWiEalDQfx4="
+  on:
+    tags: true
+    repo: lsst-sqre/nbreport
+    condition: "$PYPI_DEPLOY = true"
