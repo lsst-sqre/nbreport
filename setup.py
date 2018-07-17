@@ -47,6 +47,8 @@ tests_require = [
 
 # Optional/development dependencies
 docs_require = [
+    'documenteer[pipelines]==0.3.0a5',
+    'sphinx-click>=1.2.0,<1.3.0',
 ]
 extras_require = {
     'dev': docs_require + tests_require
