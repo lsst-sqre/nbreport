@@ -96,3 +96,32 @@ def test_load_empty_template_environment():
     """
     context, jinja_env = load_template_environment()
     assert len(context['cookiecutter'].keys()) == 0
+
+
+def test_render_ipynb():
+    """Proof-of-concept for rendering the templated ipynb notebook in
+    ``tests/test-repo/``.
+
+    This test exercises obtaining a context from the cookiecutter.json file,
+    and rendering a full ipynb given that context.
+    """
+    base_dir = Path(__file__).parent / 'test-repo'
+    context_path = base_dir / 'cookiecutter.json'
+    ipynb_path = base_dir / 'test-report.ipynb'
+
+    context, jinja_env = load_template_environment(context_path=context_path)
+    notebook = nbformat.read(str(ipynb_path.resolve()),
+                             as_version=nbformat.NO_CONVERT)
+
+    notebook = render_notebook(notebook, context, jinja_env)
+
+    assert notebook.cells[0].source == (
+        '# Test Report\n'
+        '\n'
+        '- By: Test Bot\n'
+        '- Date: 2018-07-18'
+    )
+    assert notebook.cells[1].source == (
+        "answer = 10 + 32\n"
+        "print('The answer is {}'.format(answer))"
+    )
