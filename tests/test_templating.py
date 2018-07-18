@@ -1,24 +1,22 @@
 """Tests for the nbreport.templating module.
 """
 
-from cookiecutter.environment import StrictEnvironment
-import nbformat
+from pathlib import Path
 
-from nbreport.templating import render_cell, render_notebook
+import nbformat
+import pytest
+
+from nbreport.templating import (render_cell, render_notebook,
+                                 load_template_environment)
 
 
 def test_render_cell_markdown():
     """Test render_cell with a Markdown cell.
     """
     context = {
-        'cookiecutter': {
-            'title': 'Hello world'
-        }
+        'title': 'Hello world'
     }
-    jinja_env = StrictEnvironment(
-        context=context,
-        keep_trailing_newline=True,
-    )
+    context, jinja_env = load_template_environment(extra_context=context)
 
     original_cell = nbformat.v4.new_markdown_cell(
         '# {{ cookiecutter.title }}\n')
@@ -31,15 +29,10 @@ def test_render_cell_code():
     """Test render_cell with a code (Python) cell.
     """
     context = {
-        'cookiecutter': {
-            'a': '10',
-            'b': '32'
-        }
+        'a': '10',
+        'b': '32'
     }
-    jinja_env = StrictEnvironment(
-        context=context,
-        keep_trailing_newline=True,
-    )
+    context, jinja_env = load_template_environment(extra_context=context)
 
     original_cell = nbformat.v4.new_code_cell(
         'answer = {{ cookiecutter.a }} + {{ cookiecutter.b }}\n')
@@ -49,17 +42,14 @@ def test_render_cell_code():
 
 
 def test_render_notebook():
+    """Test the render_notebook function.
+    """
     context = {
-        'cookiecutter': {
-            'title': 'Hello world',
-            'a': '10',
-            'b': '32'
-        }
+        'title': 'Hello world',
+        'a': '10',
+        'b': '32'
     }
-    jinja_env = StrictEnvironment(
-        context=context,
-        keep_trailing_newline=True,
-    )
+    context, jinja_env = load_template_environment(extra_context=context)
 
     notebook = nbformat.v4.new_notebook()
     notebook.cells.append(
@@ -73,3 +63,36 @@ def test_render_notebook():
 
     assert rendered.cells[0].source == '# Hello world\n'
     assert rendered.cells[1].source == 'answer = 10 + 32\n'
+
+
+@pytest.mark.parametrize(
+    'use_pathlib',
+    [(True,), (False,)]
+)
+def test_load_template_environment_from_fs(use_pathlib):
+    """Test loading the template environment in tests/test-repo using the
+    ``cookiecutter.json`` file as context.
+
+    Test passing the context file's path as both a pathlib.Path and as a
+    string.
+    """
+    base_dir = Path(__file__).parent / 'test-repo'
+    context_path = base_dir / 'cookiecutter.json'
+
+    if not use_pathlib:
+        context_path = str(context_path)
+
+    context, jinja_env = load_template_environment(context_path=context_path)
+
+    assert context['cookiecutter']['title'] == 'Test Report'
+    assert context['cookiecutter']['username'] == 'Test Bot'
+    assert context['cookiecutter']['generated_iso8601'] == '2018-07-18'
+    assert context['cookiecutter']['a'] == 10
+    assert context['cookiecutter']['b'] == 32
+
+
+def test_load_empty_template_environment():
+    """Test load_template_environment if not context is given.
+    """
+    context, jinja_env = load_template_environment()
+    assert len(context['cookiecutter'].keys()) == 0
