@@ -29,7 +29,9 @@ long_description = read('README.rst')
 
 # Core dependencies
 install_requires = [
-    'click>=6.7,<7.0'
+    'click>=6.7,<7.0',
+    'cookiecutter>=1.6.0,<2.0.0',
+    'nbformat',
 ]
 
 # Setup dependencies
