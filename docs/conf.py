@@ -85,6 +85,8 @@ default_role = 'py:obj'
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
+    'nbformat': ('http://nbformat.readthedocs.io/en/latest/', None),
+    'cookiecutter': ('https://cookiecutter.readthedocs.io/en/latest/', None),
 }
 
 # -- Options for linkcheck builder ----------------------------------------
