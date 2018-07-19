@@ -9,9 +9,9 @@ from nbreport.repo import ReportRepo
 
 
 def test_report_repo():
-    """Test ReportRepo on the ``/tests/test-repo`` path.
+    """Test ReportRepo on the ``/tests/TESTR-000`` path.
     """
-    repo_path = Path(__file__).parent / 'test-repo'
+    repo_path = Path(__file__).parent / 'TESTR-000'
 
     repo = ReportRepo(repo_path)
 
@@ -19,10 +19,10 @@ def test_report_repo():
 
 
 def test_report_repo_from_str():
-    """Test creating a ReportRepo on the ``/tests/test-repo`` path from a
+    """Test creating a ReportRepo on the ``/tests/TESTR-000`` path from a
     string.
     """
-    repo_path = Path(__file__).parent / 'test-repo'
+    repo_path = Path(__file__).parent / 'TESTR-000'
     repo = ReportRepo(str(repo_path))
     assert repo.dirname == repo_path
 
