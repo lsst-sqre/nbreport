@@ -16,6 +16,7 @@ def test_report_repo():
     repo = ReportRepo(repo_path)
 
     assert repo.dirname == repo_path
+    assert repo.context_path == repo_path / 'cookiecutter.json'
 
 
 def test_report_repo_from_str():

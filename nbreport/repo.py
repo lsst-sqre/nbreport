@@ -31,3 +31,10 @@ class ReportRepo:
         """Directory path of the cloned report repository (`pathlib.Path`).
         """
         return self._dirname
+
+    @property
+    def context_path(self):
+        """Path to the cookiecutter.json template context file
+        (`pathlib.Path`).
+        """
+        return self.dirname / 'cookiecutter.json'
