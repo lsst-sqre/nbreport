@@ -74,9 +74,9 @@ setup(
     tests_require=tests_require,
     use_scm_version=True,
     # package_data={},
-    # entry_points={
-    #     'console_scripts': [
-    #         'nbreport = nbreport.cli.main:main',
-    #     ]
-    # }
+    entry_points={
+        'console_scripts': [
+            'nbreport = nbreport.cli.main:main',
+        ]
+    }
 )
