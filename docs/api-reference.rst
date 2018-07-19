@@ -4,6 +4,18 @@
 Python API reference
 ####################
 
+.. _nbreport.repo:
+
+nbreport.repo
+=============
+
+The ``nbreport.repo`` module provides APIs for managing report repositories.
+
+.. automodapi:: nbreport.repo
+   :no-main-docstr:
+   :no-heading:
+   :no-inheritance-diagram:
+
 .. _nbreport.templating:
 
 nbreport.templating
