@@ -49,6 +49,12 @@ class ReportRepo:
         return self.dirname / 'nbreport.yaml'
 
     @property
+    def ipynb_path(self):
+        """Path to report's notebook template (`pathlib.Path`).
+        """
+        return self.dirname / self.config['ipynb']
+
+    @property
     def config(self):
         """Notebook repository configuration (``ReportConfig``).
         """

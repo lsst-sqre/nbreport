@@ -68,13 +68,12 @@ class ReportInstance:
         instance_dirname.mkdir()
 
         # Copy files into the instance
-        # FIXME replace this file discovery with configuration from the Report
-        # instance
-        shutil.copy(
+        repo_paths = [
             report_repo.context_path,
-            instance_dirname / 'cookiecutter.json')
-        source_ipynb = next(report_repo.dirname.glob('*.ipynb'))
-        dest_ipynb = instance_dirname / source_ipynb.name
-        shutil.copy(source_ipynb, dest_ipynb)
+            report_repo.ipynb_path,
+            report_repo.config_path
+        ]
+        for source_path in repo_paths:
+            shutil.copy(source_path, instance_dirname.name)
 
         return ReportInstance(instance_dirname)
