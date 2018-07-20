@@ -6,6 +6,8 @@ __all__ = ('ReportInstance',)
 from pathlib import Path
 import shutil
 
+from .repo import ReportConfig
+
 
 class ReportInstance:
     """Instance of a notebook-based report.
@@ -33,8 +35,34 @@ class ReportInstance:
         """
         return self._dirname
 
+    @property
+    def context_path(self):
+        """Path to the cookiecutter.json template context file
+        (`pathlib.Path`).
+        """
+        return self.dirname / 'cookiecutter.json'
+
+    @property
+    def config_path(self):
+        """Path to the ``nbreport.yaml`` configuration file (`pathlib.Path`).
+        """
+        return self.dirname / 'nbreport.yaml'
+
+    @property
+    def ipynb_path(self):
+        """Path to notebook file (`pathlib.Path`).
+        """
+        return self.dirname / self.config['ipynb']
+
+    @property
+    def config(self):
+        """Report instance configuration (``ReportConfig``).
+        """
+        return ReportConfig(self.config_path)
+
     @classmethod
-    def from_report_repo(self, report_repo, instance_dirname, overwrite=False):
+    def from_report_repo(self, report_repo, instance_dirname, instance_id,
+                         overwrite=False):
         """Create a new instance of a report from a report repository.
 
         This creates a directory on the file system for the instance.
@@ -45,6 +73,8 @@ class ReportInstance:
             Report repository.
         instance_dirname : `pathlib.Path` or `str`
             Directory path for the new instance.
+        instance_id : `str`
+            Identifier of the report instance.
         overwrite : `bool`, optional
             If `True`, an existing report instance directory will be deleted
             and replaced by the new report instance directory. Default is
@@ -74,6 +104,11 @@ class ReportInstance:
             report_repo.config_path
         ]
         for source_path in repo_paths:
-            shutil.copy(source_path, instance_dirname.name)
+            shutil.copy(source_path, instance_dirname / source_path.name)
 
-        return ReportInstance(instance_dirname)
+        instance = ReportInstance(instance_dirname)
+        instance.config['instance_id'] = instance_id
+        instance.config['instance_handle'] = '{handle}-{instance_id}'.format(
+            **instance.config)
+
+        return instance
