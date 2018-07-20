@@ -15,6 +15,7 @@ The ``nbreport.repo`` module provides APIs for managing report repositories.
    :no-main-docstr:
    :no-heading:
    :no-inheritance-diagram:
+   :skip: ReportConfig
 
 .. _nbreport.templating:
 

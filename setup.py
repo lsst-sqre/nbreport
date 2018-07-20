@@ -32,6 +32,7 @@ install_requires = [
     'click>=6.7,<7.0',
     'cookiecutter>=1.6.0,<2.0.0',
     'nbformat',
+    'ruamel.yaml>=0.15.0,<0.16.0'
 ]
 
 # Setup dependencies
