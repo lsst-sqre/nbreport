@@ -7,6 +7,8 @@ import logging
 
 import click
 
+from .test import test
+
 
 # Add -h as a help shortcut option
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -60,4 +62,4 @@ def help(ctx, topic, **kw):
 
 
 # Add subcommands from other modules
-# main.add_command(...)
+main.add_command(test)
