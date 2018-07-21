@@ -6,7 +6,10 @@ __all__ = ('ReportInstance',)
 from pathlib import Path
 import shutil
 
+import nbformat
+
 from .repo import ReportConfig
+from .templating import render_notebook, load_template_environment
 
 
 class ReportInstance:
@@ -62,10 +65,12 @@ class ReportInstance:
 
     @classmethod
     def from_report_repo(self, report_repo, instance_dirname, instance_id,
-                         overwrite=False):
+                         context=None, overwrite=False):
         """Create a new instance of a report from a report repository.
 
-        This creates a directory on the file system for the instance.
+        This creates the instance directory on the filesystem and renders
+        the templated notebook from a combination of provided context
+        variables and defaults.
 
         Parameters
         ----------
@@ -75,6 +80,10 @@ class ReportInstance:
             Directory path for the new instance.
         instance_id : `str`
             Identifier of the report instance.
+        context : `dict`, optional
+            Key-value pairs that override the default template context in
+            the context file (``cookiecutter.json`,
+            `ReportInstance.context_path`).
         overwrite : `bool`, optional
             If `True`, an existing report instance directory will be deleted
             and replaced by the new report instance directory. Default is
@@ -111,4 +120,34 @@ class ReportInstance:
         instance.config['instance_handle'] = '{handle}-{instance_id}'.format(
             **instance.config)
 
+        instance._render(context=context)
+
         return instance
+
+    def _render(self, context=None):
+        """Render the notebook from the template in the notebook
+
+        Parameters
+        ----------
+        context : `dict`
+            Key-value pairs that override the default template context in
+            the context file (``cookiecutter.json`,
+            `ReportInstance.context_path`).
+
+        Notes
+        -----
+        The notebook is rendered and saved in place. A rendered notebook
+        cannot be re-rendered.
+        """
+        notebook_path = self.dirname / self.config['ipynb']
+        notebook = nbformat.read(
+            str(notebook_path),
+            as_version=nbformat.NO_CONVERT)
+
+        context, jinja_env = load_template_environment(
+            context_path=self.context_path,
+            extra_context=context)
+
+        notebook = render_notebook(notebook, context, jinja_env)
+
+        nbformat.write(notebook, str(notebook_path))
