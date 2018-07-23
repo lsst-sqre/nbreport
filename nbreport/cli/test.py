@@ -8,6 +8,7 @@ import pathlib
 
 import click
 
+from ..compute import compute_notebook_file
 from ..repo import ReportRepo
 from ..instance import ReportInstance
 
@@ -32,8 +33,19 @@ from ..instance import ReportInstance
     help='Whether or not to overwrite an existing test instance. Overwriting '
          'is enabled by default.'
 )
+@click.option(
+    '--timeout', type=int, default=None,
+    help='Timeout for computing individual notebook cells. Default is no '
+         'timeout.'
+)
+@click.option(
+    '-k', '--kernel', type=str, default='',
+    help='Name of the Jupyter kernel to use for computing the notebook. '
+         'The default Python kernel is used if this option is not set.'
+)
 @click.pass_context
-def test(ctx, repo_path, instance_path, instance_id, overwrite):
+def test(ctx, repo_path, instance_path, instance_id, overwrite, timeout,
+         kernel):
     """Test a notebook repository by instantiating and computing it.
 
     REPO_PATH is the path to the report repository directory.
@@ -53,3 +65,7 @@ def test(ctx, repo_path, instance_path, instance_id, overwrite):
     instance = ReportInstance.from_report_repo(
         report_repo, instance_path, instance_id, overwrite=overwrite)
     logger.debug('Created instance %s at %s', instance, instance_path)
+
+    compute_notebook_file(instance.ipynb_path, timeout=timeout,
+                          kernel_name=kernel)
+    logger.debug('Computed notebook %s', instance.ipynb_path)
