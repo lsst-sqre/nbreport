@@ -82,3 +82,25 @@ def test_config_option(tmpdir):
         assert nb.cells[1].outputs[0]['text'] == (
             'The answer is 300\n'
         )
+
+
+def test_from_git_clone(tmpdir):
+    """Test creating an instance from a GitHub original repository.
+    """
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        args = [
+            '--log-level', 'debug',
+            'test',  # subcommand
+            'https://github.com/lsst-sqre/nbreport',
+            '--git-ref', 'master',
+            '--git-subdir', 'tests/TESTR-000',
+            '-c', 'title', 'My sick report',
+            '-c', 'a', '100',
+            '-c', 'b', '200',
+        ]
+        result = runner.invoke(nbreport.cli.main.main, args)
+        print(result.output)
+
+        assert result.exit_code == 0

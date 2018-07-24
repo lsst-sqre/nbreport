@@ -5,6 +5,8 @@ __all__ = ('test',)
 
 import logging
 import pathlib
+from tempfile import TemporaryDirectory
+from urllib.parse import urlparse
 
 import click
 
@@ -15,8 +17,7 @@ from ..instance import ReportInstance
 
 @click.command()
 @click.argument(
-    'repo_path', default=None, required=True, nargs=1,
-    type=click.Path(exists=True, file_okay=False, dir_okay=True),
+    'repo_path_or_url', default=None, required=True, nargs=1,
 )
 @click.option(
     '-c', '--config', 'template_variables', nargs=2, type=str, multiple=True,
@@ -49,9 +50,20 @@ from ..instance import ReportInstance
     help='Name of the Jupyter kernel to use for computing the notebook. '
          'The default Python kernel is used if this option is not set.'
 )
+@click.option(
+    '--git-subdir', 'git_repo_subdir', type=str, default=None,
+    help='If cloning from a Git repository and the report is not at the root '
+         'of that Git repository, set Git repo-relative path to the report '
+         'with this option.'
+)
+@click.option(
+    '--git-ref', 'git_repo_ref', type=str, default='master',
+    help='If cloning from a Git repository, check out a specific Git ref '
+         '(branch or tag name).'
+)
 @click.pass_context
-def test(ctx, repo_path, template_variables, instance_path, instance_id,
-         overwrite, timeout, kernel):
+def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
+         overwrite, timeout, kernel, git_repo_subdir, git_repo_ref):
     """Test a notebook repository by instantiating and computing it.
 
     REPO_PATH is the path to the report repository directory.
@@ -60,29 +72,48 @@ def test(ctx, repo_path, template_variables, instance_path, instance_id,
 
     template_variables = dict(template_variables)
     logger.debug('Template variables: %s', template_variables)
-    print('Template variables: %s' % template_variables)
 
-    repo_path = pathlib.Path(repo_path)
+    if is_url(repo_path_or_url):
+        with TemporaryDirectory() as tempdir:
+            report_repo = ReportRepo.git_clone(
+                repo_path_or_url,
+                clone_base_dir=tempdir,
+                subdir=git_repo_subdir,
+                checkout=git_repo_ref
+            )
+            _run(report_repo, instance_path, instance_id, template_variables,
+                 overwrite, timeout, kernel)
+    else:
+        report_repo = ReportRepo(repo_path_or_url)
+        _run(report_repo, instance_path, instance_id, template_variables,
+             overwrite, timeout, kernel)
+
+
+def _run(report_repo, instance_path, instance_id, template_variables,
+         overwrite, timeout, kernel):
+    logger = logging.getLogger()
 
     if instance_path is None:
         instance_path = pathlib.Path(
-            '{0}-{1}'.format(str(repo_path.name), instance_id))
+            '{0}-{1}'.format(str(report_repo.dirname.name), instance_id))
     else:
         instance_path = pathlib.Path(instance_path)
-
-    print('instance_path', instance_path)
-
-    report_repo = ReportRepo(repo_path)
-
-    print('report_repo', report_repo)
 
     instance = ReportInstance.from_report_repo(
         report_repo, instance_path, instance_id, overwrite=overwrite,
         context=template_variables)
     logger.debug('Created instance %s at %s', instance, instance_path)
-    print('Created instance %s at %s' % (instance, instance_path))
 
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
     logger.debug('Computed notebook %s', instance.ipynb_path)
-    print('Computed notebook %s' % instance.ipynb_path)
+
+
+def is_url(path_or_url):
+    """Test if the token represents a URL or a local path.
+    """
+    parts = urlparse(path_or_url)
+    if parts.scheme is not '':
+        return True
+    else:
+        return False
