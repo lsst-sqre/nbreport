@@ -40,6 +40,18 @@ def test_report_repo_not_found():
         ReportRepo(str(repo_path))
 
 
+def test_report_repo_git_clone(tmpdir):
+    """Test creating a ReportRepo from a git clone.
+    """
+    repo = ReportRepo.git_clone(
+        'https://github.com/lsst-sqre/nbreport',
+        checkout='master',
+        clone_base_dir=tmpdir,
+        subdir='tests/TESTR-000')
+    assert repo.dirname.is_dir()
+    assert repo.ipynb_path.exists()
+
+
 def test_report_config_read():
     """Test reading the ReportConfig using ``/tests/TESTR-000/nbreport.yaml``.
     """
