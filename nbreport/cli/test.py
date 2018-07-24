@@ -19,6 +19,12 @@ from ..instance import ReportInstance
     type=click.Path(exists=True, file_okay=False, dir_okay=True),
 )
 @click.option(
+    '-c', '--config', 'template_variables', nargs=2, type=str, multiple=True,
+    help='Template key-value pairs. For example, if the report has a template '
+         'variable called ``title``, you can provide it as ``-c title "Hello '
+         'World!"``. You can provide multiple -c/--config options.'
+)
+@click.option(
     '-d', '--dir', 'instance_path', type=click.Path(),
     help='Path of the report directory. By default, the report directory '
          'is created in the current working directory and is named '
@@ -44,13 +50,17 @@ from ..instance import ReportInstance
          'The default Python kernel is used if this option is not set.'
 )
 @click.pass_context
-def test(ctx, repo_path, instance_path, instance_id, overwrite, timeout,
-         kernel):
+def test(ctx, repo_path, template_variables, instance_path, instance_id,
+         overwrite, timeout, kernel):
     """Test a notebook repository by instantiating and computing it.
 
     REPO_PATH is the path to the report repository directory.
     """
     logger = logging.getLogger()
+
+    template_variables = dict(template_variables)
+    logger.debug('Template variables: %s', template_variables)
+    print('Template variables: %s' % template_variables)
 
     repo_path = pathlib.Path(repo_path)
 
@@ -60,12 +70,19 @@ def test(ctx, repo_path, instance_path, instance_id, overwrite, timeout,
     else:
         instance_path = pathlib.Path(instance_path)
 
+    print('instance_path', instance_path)
+
     report_repo = ReportRepo(repo_path)
 
+    print('report_repo', report_repo)
+
     instance = ReportInstance.from_report_repo(
-        report_repo, instance_path, instance_id, overwrite=overwrite)
+        report_repo, instance_path, instance_id, overwrite=overwrite,
+        context=template_variables)
     logger.debug('Created instance %s at %s', instance, instance_path)
+    print('Created instance %s at %s' % (instance, instance_path))
 
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
     logger.debug('Computed notebook %s', instance.ipynb_path)
+    print('Computed notebook %s' % instance.ipynb_path)
