@@ -64,9 +64,31 @@ from ..instance import ReportInstance
 @click.pass_context
 def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
          overwrite, timeout, kernel, git_repo_subdir, git_repo_ref):
-    """Test a notebook repository by instantiating and computing it.
+    """Test a notebook repository by instantiating and computing it, but
+    without publishing the result.
 
-    REPO_PATH is the path to the report repository directory.
+    Use ``nbreport test`` when developing notebook repositories.
+    The ``nbreport test`` command does the following steps:
+
+    1. Instantiates a report istance from either a local report directory or
+       a report on GitHub.
+
+    2. Renders the template variables given defaults and user-provided
+       configurations (see the ``-c`` option).
+
+    3. Computes the notebook.
+
+    **Example**
+
+    .. code-block:: bash
+
+        nbreport test https://github.com/lsst-sqre \
+          --git-subdir tests/TESTR-000 -c title My first report
+
+    **Required arguments**
+
+    ``REPO_PATH``
+        The path to the report repository directory.
     """
     logger = logging.getLogger()
 
