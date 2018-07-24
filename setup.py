@@ -32,6 +32,9 @@ install_requires = [
     'click>=6.7,<7.0',
     'cookiecutter>=1.6.0,<2.0.0',
     'nbformat',
+    'nbconvert',
+    'jupyter',  # needed by nbconvert
+    'ruamel.yaml>=0.15.0,<0.16.0'
 ]
 
 # Setup dependencies
@@ -74,9 +77,9 @@ setup(
     tests_require=tests_require,
     use_scm_version=True,
     # package_data={},
-    # entry_points={
-    #     'console_scripts': [
-    #         'nbreport = nbreport.cli.main:main',
-    #     ]
-    # }
+    entry_points={
+        'console_scripts': [
+            'nbreport = nbreport.cli.main:main',
+        ]
+    }
 )

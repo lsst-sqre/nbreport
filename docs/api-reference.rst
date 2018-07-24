@@ -4,6 +4,31 @@
 Python API reference
 ####################
 
+.. _nbreport.compute:
+
+nbreport.compute
+================
+
+The ``nbreport.compute`` module supports running Jupyter notebooks to compute output cells.
+
+.. automodapi:: nbreport.compute
+   :no-main-docstr:
+   :no-heading:
+   :no-inheritance-diagram:
+
+.. _nbreport.repo:
+
+nbreport.repo
+=============
+
+The ``nbreport.repo`` module provides APIs for managing report repositories.
+
+.. automodapi:: nbreport.repo
+   :no-main-docstr:
+   :no-heading:
+   :no-inheritance-diagram:
+   :skip: ReportConfig
+
 .. _nbreport.templating:
 
 nbreport.templating
