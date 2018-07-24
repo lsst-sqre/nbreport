@@ -22,6 +22,7 @@ Documentation
 .. toctree::
    :maxdepth: 1
 
+   cli-reference
    api-reference
    changelog
    development

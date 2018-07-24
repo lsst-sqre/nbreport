@@ -19,7 +19,7 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     '--log-level', 'log_level',
     type=click.Choice(['warning', 'info', 'debug']),
     default='info',
-    help='Logging level (for first-party messages). Default: `info`.'
+    help='Logging level (for first-party messages). Default: ``info``.'
 )
 @click.version_option(message='%(version)s')
 @click.pass_context
