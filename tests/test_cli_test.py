@@ -4,9 +4,9 @@
 from pathlib import Path
 
 from click.testing import CliRunner
-import nbformat
 
 import nbreport.cli.main
+from nbreport.instance import ReportInstance
 
 
 def test_basic(tmpdir):
@@ -69,9 +69,8 @@ def test_config_option(tmpdir):
 
         assert result.exit_code == 0
 
-        notebook_path = Path('TESTR-000-test') / 'TESTR-000.ipynb'
-        nb = nbformat.read(str(notebook_path.resolve()),
-                           as_version=nbformat.NO_CONVERT)
+        instance = ReportInstance('TESTR-000-test')
+        nb = instance.open_notebook()
 
         assert nb.cells[0].source == (
             "# My sick report\n"

@@ -3,6 +3,7 @@
 
 from pathlib import Path
 
+import nbformat
 import pytest
 
 from nbreport.repo import ReportRepo, ReportConfig
@@ -19,6 +20,7 @@ def test_report_repo():
     assert repo.context_path == repo_path / 'cookiecutter.json'
     assert repo.config_path == repo_path / 'nbreport.yaml'
     assert isinstance(repo.config, ReportConfig)
+    assert isinstance(repo.open_notebook(), nbformat.NotebookNode)
 
 
 def test_report_repo_from_str():

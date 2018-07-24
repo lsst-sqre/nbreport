@@ -6,6 +6,7 @@ __all__ = ('ReportRepo', 'ReportConfig')
 from io import StringIO
 from pathlib import Path
 
+import nbformat
 from ruamel.yaml import YAML
 
 
@@ -59,6 +60,19 @@ class ReportRepo:
         """Notebook repository configuration (``ReportConfig``).
         """
         return ReportConfig(self.config_path)
+
+    def open_notebook(self):
+        """Open the repository's notebook file.
+
+        Returns
+        -------
+        notebook : `nbformat.NotebookNode`
+            The repository's notebook file as a `~nbformat.NotebookNode`
+            instance. If modified, the notebook must be explicitly written
+            to disk with `nbformat.write` to be persisted.
+        """
+        return nbformat.read(str(self.ipynb_path),
+                             as_version=nbformat.NO_CONVERT)
 
 
 class ReportConfig:
