@@ -4,8 +4,12 @@
 __all__ = ('ReportRepo', 'ReportConfig')
 
 from io import StringIO
+import os
 from pathlib import Path
+from urllib.parse import urlparse
 
+import git
+import nbformat
 from ruamel.yaml import YAML
 
 
@@ -28,6 +32,47 @@ class ReportRepo:
         self._dirname = dirname.resolve()
         if not self._dirname.is_dir():
             raise OSError('Report repo not found at {}'.format(self._dirname))
+
+    @classmethod
+    def git_clone(cls, url, clone_base_dir=None, checkout='master',
+                  subdir=None):
+        """Create a ReportRepo instance by cloning from a Git repository.
+
+        Parameters
+        ----------
+        url : `str`
+            URL of the remote Git repository.
+        clone_base_dir : `str`, optional
+            Directory to clone the Git repository into. Defaults to the
+            current working directory.
+        checkout : `str`, optional
+            Git ref (branch or tag) to check out. By default, the default
+            (``master``) branch is checked out.
+        subdir : `str`, optional
+            If a report repository is not located in the root of a Git
+            repository, set the Git-repo-relative directory path with this
+            argument.
+
+        Returns
+        -------
+        ReportRepo
+            Report repository instance (located on a local file system).
+        """
+        url_parts = urlparse(url)
+        repo_name = url_parts.path.split('/')[-1]
+        repo_name = os.path.splitext(repo_name)[0]
+
+        if clone_base_dir is None:
+            clone_dir = Path(repo_name)
+        else:
+            clone_dir = Path(clone_base_dir) / repo_name
+
+        git.Repo.clone_from(url, clone_dir, branch=checkout)
+
+        if subdir is None:
+            return cls(clone_dir)
+        else:
+            return cls(clone_dir / subdir)
 
     @property
     def dirname(self):
@@ -59,6 +104,19 @@ class ReportRepo:
         """Notebook repository configuration (``ReportConfig``).
         """
         return ReportConfig(self.config_path)
+
+    def open_notebook(self):
+        """Open the repository's notebook file.
+
+        Returns
+        -------
+        notebook : `nbformat.NotebookNode`
+            The repository's notebook file as a `~nbformat.NotebookNode`
+            instance. If modified, the notebook must be explicitly written
+            to disk with `nbformat.write` to be persisted.
+        """
+        return nbformat.read(str(self.ipynb_path),
+                             as_version=nbformat.NO_CONVERT)
 
 
 class ReportConfig:

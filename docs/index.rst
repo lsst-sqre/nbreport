@@ -6,6 +6,7 @@ nbreport is a client for creating and publishing LSST's notebook-based reports.
 Notebook-based reports are generated from template repositories, computed, and published with LSST the Docs.
 
 nbreport is developed on GitHub at https://github.com/lsst-sqre/nbreport.
+The design document is https://sqr-023.lsst.io.
 
 Installation
 ============
@@ -15,6 +16,19 @@ Installation
    pip install nbreport
 
 nbreport is built for Python 3.6 and newer.
+
+Try it out
+==========
+
+This one-line command creates a test report instance:
+
+.. code-block:: bash
+
+   nbreport test https://github.com/lsst-sqre --git-subdir tests/TESTR-000 -c title My first report
+
+This test command uses the `TESTR-000 example report repository`_ in this project's own Git repository.
+Next, it creates a new report instance called ``TESTR-000-test`` in your current working directory and configures the notebook so that the ``title`` variable is ``"My first report"``.
+Finally, the test command runs the notebook to generate outputs.
 
 Documentation
 =============
@@ -26,3 +40,5 @@ Documentation
    api-reference
    changelog
    development
+
+.. _`TESTR-000 example report repository`: https://github.com/lsst-sqre/nbreport/tree/master/tests/TESTR-000

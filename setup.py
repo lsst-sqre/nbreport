@@ -34,7 +34,8 @@ install_requires = [
     'nbformat',
     'nbconvert',
     'jupyter',  # needed by nbconvert
-    'ruamel.yaml>=0.15.0,<0.16.0'
+    'ruamel.yaml>=0.15.0,<0.16.0',
+    'GitPython'
 ]
 
 # Setup dependencies

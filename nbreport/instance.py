@@ -63,6 +63,19 @@ class ReportInstance:
         """
         return ReportConfig(self.config_path)
 
+    def open_notebook(self):
+        """Open the instance's notebook file.
+
+        Returns
+        -------
+        notebook : `nbformat.NotebookNode`
+            The repository's notebook file as a `~nbformat.NotebookNode`
+            instance. If modified, the notebook must be explicitly written
+            to disk with `nbformat.write` to be persisted.
+        """
+        return nbformat.read(str(self.ipynb_path),
+                             as_version=nbformat.NO_CONVERT)
+
     @classmethod
     def from_report_repo(self, report_repo, instance_dirname, instance_id,
                          context=None, overwrite=False):
@@ -139,10 +152,7 @@ class ReportInstance:
         The notebook is rendered and saved in place. A rendered notebook
         cannot be re-rendered.
         """
-        notebook_path = self.dirname / self.config['ipynb']
-        notebook = nbformat.read(
-            str(notebook_path),
-            as_version=nbformat.NO_CONVERT)
+        notebook = self.open_notebook()
 
         context, jinja_env = load_template_environment(
             context_path=self.context_path,
@@ -150,4 +160,4 @@ class ReportInstance:
 
         notebook = render_notebook(notebook, context, jinja_env)
 
-        nbformat.write(notebook, str(notebook_path))
+        nbformat.write(notebook, str(self.ipynb_path))

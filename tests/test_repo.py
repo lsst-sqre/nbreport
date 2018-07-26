@@ -3,6 +3,7 @@
 
 from pathlib import Path
 
+import nbformat
 import pytest
 
 from nbreport.repo import ReportRepo, ReportConfig
@@ -19,6 +20,7 @@ def test_report_repo():
     assert repo.context_path == repo_path / 'cookiecutter.json'
     assert repo.config_path == repo_path / 'nbreport.yaml'
     assert isinstance(repo.config, ReportConfig)
+    assert isinstance(repo.open_notebook(), nbformat.NotebookNode)
 
 
 def test_report_repo_from_str():
@@ -36,6 +38,18 @@ def test_report_repo_not_found():
     repo_path = Path(__file__).parent / 'nonexistent'
     with pytest.raises(OSError):
         ReportRepo(str(repo_path))
+
+
+def test_report_repo_git_clone(tmpdir):
+    """Test creating a ReportRepo from a git clone.
+    """
+    repo = ReportRepo.git_clone(
+        'https://github.com/lsst-sqre/nbreport',
+        checkout='master',
+        clone_base_dir=tmpdir,
+        subdir='tests/TESTR-000')
+    assert repo.dirname.is_dir()
+    assert repo.ipynb_path.exists()
 
 
 def test_report_config_read():

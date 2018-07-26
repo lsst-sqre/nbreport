@@ -2,6 +2,13 @@
 Change log
 ##########
 
+0.4.0 (2018-07-25)
+==================
+
+- ``nbreport test`` can now open a report repository from a remote Git repository (such as one on GitHub).
+
+- New ``nbreport.ReportRepository.git_clone()`` class method to clone a report repository from GitHub.
+
 0.3.0 (2018-07-23)
 ==================
 

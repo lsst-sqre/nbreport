@@ -4,6 +4,7 @@
 from pathlib import Path
 
 import pytest
+import nbformat
 
 from nbreport.instance import ReportInstance
 from nbreport.repo import ReportRepo
@@ -24,6 +25,7 @@ def test_report_repo(tmpdir):
     assert instance.config['handle'] == 'TESTR-000'
     assert instance.config['instance_id'] == '1'
     assert instance.config['instance_handle'] == 'TESTR-000-1'
+    assert isinstance(instance.open_notebook(), nbformat.NotebookNode)
 
     # Test re-opening the report instance, but with a string path
     instance2 = ReportInstance(str(instance_dirname))

@@ -4,9 +4,9 @@
 from pathlib import Path
 
 from click.testing import CliRunner
-import nbformat
 
 import nbreport.cli.main
+from nbreport.instance import ReportInstance
 
 
 def test_basic(tmpdir):
@@ -69,9 +69,8 @@ def test_config_option(tmpdir):
 
         assert result.exit_code == 0
 
-        notebook_path = Path('TESTR-000-test') / 'TESTR-000.ipynb'
-        nb = nbformat.read(str(notebook_path.resolve()),
-                           as_version=nbformat.NO_CONVERT)
+        instance = ReportInstance('TESTR-000-test')
+        nb = instance.open_notebook()
 
         assert nb.cells[0].source == (
             "# My sick report\n"
@@ -83,3 +82,25 @@ def test_config_option(tmpdir):
         assert nb.cells[1].outputs[0]['text'] == (
             'The answer is 300\n'
         )
+
+
+def test_from_git_clone(tmpdir):
+    """Test creating an instance from a GitHub original repository.
+    """
+    runner = CliRunner()
+
+    with runner.isolated_filesystem():
+        args = [
+            '--log-level', 'debug',
+            'test',  # subcommand
+            'https://github.com/lsst-sqre/nbreport',
+            '--git-ref', 'master',
+            '--git-subdir', 'tests/TESTR-000',
+            '-c', 'title', 'My sick report',
+            '-c', 'a', '100',
+            '-c', 'b', '200',
+        ]
+        result = runner.invoke(nbreport.cli.main.main, args)
+        print(result.output)
+
+        assert result.exit_code == 0
