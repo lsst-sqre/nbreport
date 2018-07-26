@@ -7,9 +7,12 @@ __all__ = ('login',)
 import datetime
 from getpass import getuser
 from socket import gethostname
+from pathlib import Path
 
 import click
 import requests
+import ruamel.yaml
+from ruamel.yaml.comments import CommentedMap
 
 
 @click.command()
@@ -50,7 +53,14 @@ def login(ctx, github_username, github_password):
         token_data = request_github_token(
             github_username, github_password, twofactor=twofactor)
 
-    click.echo('token: %s' % token_data['token'])
+    write_token(
+        github_username,
+        token_data['token'],
+        token_data['note'])
+    click.echo(
+        'Saved the user:read token to ~/.nbreport.yaml. You '
+        'can revoke it at https://github.com/settings/tokens'
+    )
 
 
 def request_github_token(github_username, github_password, twofactor=None):
@@ -121,3 +131,40 @@ def request_github_token(github_username, github_password, twofactor=None):
 class GitHubTwoFactorRequired(Exception):
     """Two-factor authentication is required for this GitHub request.
     """
+
+
+def write_token(username, token, note, path=None):
+    """Write a GitHub personal access token to the user's nbreport
+    configuration file.
+
+    Parameters
+    ----------
+    username : `str`
+        GitHub username.
+    token : `str`
+        GitHub personal access token belonging to the user.
+    note : `str`
+        Note to associate with the token.
+    path : `str`, optional
+        Path to the nbreport configuration file. By default this is located
+        at ``~/.nbreport.yaml``.
+    """
+    yaml = ruamel.yaml.YAML()  # round-trip mode.
+
+    if path is None:
+        path = Path.home() / '.nbreport.yaml'
+    else:
+        path = Path(path)
+
+    if path.exists():
+        config_data = yaml.load(path)
+    else:
+        config_data = CommentedMap({'github': None})
+
+    config_data['github'] = CommentedMap({
+        'username': username,
+        'token': token
+    })
+    config_data['github'].yaml_add_eol_comment(note, 'token')
+
+    yaml.dump(config_data, path)
