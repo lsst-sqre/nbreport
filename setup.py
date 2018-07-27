@@ -35,7 +35,8 @@ install_requires = [
     'nbconvert',
     'jupyter',  # needed by nbconvert
     'ruamel.yaml>=0.15.0,<0.16.0',
-    'GitPython'
+    'GitPython',
+    'requests>=2.0',
 ]
 
 # Setup dependencies
@@ -49,6 +50,7 @@ tests_require = [
     'pytest==3.5.0',
     'pytest-cov==2.5.1',
     'pytest-flake8==1.0.0',
+    'responses==0.9.0',
 ]
 
 # Optional/development dependencies

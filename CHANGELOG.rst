@@ -2,6 +2,16 @@
 Change log
 ##########
 
+0.5.0 (2018-07-27)
+==================
+
+- New ``nbreport login`` command that generates a GitHub personal access token on behalf of the user and caches it in a ``~/.nbreport.yaml`` file.
+  LSST's notebook-based report system uses GitHub to authenticate users submitting reports and to authorize the publication based on GitHub organization memberships.
+
+- New dependencies on ``requests`` and ``responses``.
+
+`DM-15216 <https://jira.lsstcorp.org/browse/DM-15216>`__.
+
 0.4.0 (2018-07-25)
 ==================
 

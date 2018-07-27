@@ -7,6 +7,7 @@ import logging
 
 import click
 
+from .login import login
 from .test import test
 
 
@@ -62,4 +63,5 @@ def help(ctx, topic, **kw):
 
 
 # Add subcommands from other modules
+main.add_command(login)
 main.add_command(test)

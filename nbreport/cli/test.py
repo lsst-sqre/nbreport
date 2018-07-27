@@ -82,8 +82,8 @@ def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
 
     .. code-block:: bash
 
-        nbreport test https://github.com/lsst-sqre \
-          --git-subdir tests/TESTR-000 -c title My first report
+        nbreport test https://github.com/lsst-sqre/nbreport \
+          --git-subdir tests/TESTR-000 -c title "My first report"
 
     **Required arguments**
 

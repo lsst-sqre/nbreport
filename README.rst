@@ -28,7 +28,7 @@ You can use nbreport to:
 
 Try this test command to get a sense for how nbreport work::
 
-   nbreport test https://github.com/lsst-sqre --git-subdir tests/TESTR-000 -c title My first report
+   nbreport test https://github.com/lsst-sqre/nbreport --git-subdir tests/TESTR-000 -c title "My first report"
 
 This test command uses the `TESTR-000 example report repository`_ in this project's own Git repository.
 Next, it creates a new instance called ``TESTR-000-test`` in your current working directory and configures the notebook so that the ``title`` variable is ``"My first report"``.
