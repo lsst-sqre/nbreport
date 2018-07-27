@@ -6,7 +6,7 @@ Installation for development
 ============================
 
 Create a virtual environment for development.
-Then install LTD Conveyor with development dependencies:
+Then install nbreport with development dependencies:
 
 .. code-block:: bash
 
