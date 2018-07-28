@@ -58,8 +58,8 @@ def login(ctx, github_username, github_password):
         token_data['token'],
         token_data['note'])
     click.echo(
-        'Saved the user:read token to ~/.nbreport.yaml. You '
-        'can revoke it at https://github.com/settings/tokens'
+        'Saved the token to ~/.nbreport.yaml. It has read:user and read:org '
+        'scope. You can revoke it at https://github.com/settings/tokens'
     )
 
 
@@ -89,7 +89,7 @@ def request_github_token(github_username, github_password, twofactor=None):
 
     Notes
     -----
-    The token is generated with the ``read:user`` scope.
+    The token is generated with the ``read:user`` and ``read:org`` scopes.
 
     The token is generated with a note formatted as::
 
@@ -103,7 +103,7 @@ def request_github_token(github_username, github_password, twofactor=None):
         time=datetime.datetime.now().isoformat()
     )
     request_data = {
-        'scopes': ['read:user'],
+        'scopes': ['read:user', 'read:org'],
         'note': note,
         'note_url': 'https://nbreport.lsst.io'
     }
