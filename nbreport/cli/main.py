@@ -31,9 +31,13 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     help='Path to the nbreport user configuration file. '
          'Default: ``~/.nbreport.yaml``.'
 )
+@click.option(
+    '--server', default='https://api.lsst.codes',
+    help='URL of the API host server. Default: ``https://api.lsst.codes``.'
+)
 @click.version_option(message='%(version)s')
 @click.pass_context
-def main(ctx, log_level, config_path):
+def main(ctx, log_level, config_path, server):
     """nbreport is a command-line client for LSST's notebook-based report
     system. Use nbreport to initialize, compute, and upload report instances.
     """
@@ -61,7 +65,8 @@ def main(ctx, log_level, config_path):
     # ctx.obj object as the first argument.
     ctx.obj = {
         'config_path': config_path,
-        'config': config
+        'config': config,
+        'server': server
     }
 
 
