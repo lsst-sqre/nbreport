@@ -4,9 +4,11 @@
 __all__ = ('main',)
 
 import logging
+from pathlib import Path
 
 import click
 
+from ..userconfig import read_config, get_config_path, create_empty_config
 from .login import login
 from .test import test
 
@@ -22,9 +24,16 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
     default='info',
     help='Logging level (for first-party messages). Default: ``info``.'
 )
+@click.option(
+    '--config-file', 'config_path',
+    type=click.Path(dir_okay=False, resolve_path=True),
+    default=get_config_path,
+    help='Path to the nbreport user configuration file. '
+         'Default: ``~/.nbreport.yaml``.'
+)
 @click.version_option(message='%(version)s')
 @click.pass_context
-def main(ctx, log_level):
+def main(ctx, log_level, config_path):
     """nbreport is a command-line client for LSST's notebook-based report
     system. Use nbreport to initialize, compute, and upload report instances.
     """
@@ -42,9 +51,17 @@ def main(ctx, log_level):
     logger.addHandler(ch)
     logger.setLevel(log_level.upper())
 
+    config_path = Path(config_path)
+    try:
+        config = read_config(path=config_path)
+    except FileNotFoundError:
+        config = create_empty_config()
+
     # Subcommands should use the click.pass_obj decorator to get this
     # ctx.obj object as the first argument.
     ctx.obj = {
+        'config_path': config_path,
+        'config': config
     }
 
 

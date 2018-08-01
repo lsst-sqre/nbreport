@@ -11,8 +11,7 @@ from socket import gethostname
 import click
 import requests
 
-from ..userconfig import (read_config, create_empty_config,
-                          insert_github_config, write_config)
+from ..userconfig import insert_github_config, write_config
 
 
 @click.command()
@@ -53,10 +52,13 @@ def login(ctx, github_username, github_password):
         token_data = request_github_token(
             github_username, github_password, twofactor=twofactor)
 
-    write_token(
+    config = insert_github_config(
+        ctx.obj['config'],
         github_username,
         token_data['token'],
-        token_data['note'])
+        token_note=token_data['note'])
+    write_config(config, path=ctx.obj['config_path'])
+
     click.echo(
         'Saved the token to ~/.nbreport.yaml. It has read:user and read:org '
         'scope. You can revoke it at https://github.com/settings/tokens'
@@ -131,29 +133,3 @@ def request_github_token(github_username, github_password, twofactor=None):
 class GitHubTwoFactorRequired(Exception):
     """Two-factor authentication is required for this GitHub request.
     """
-
-
-def write_token(username, token, note, path=None):
-    """Write a GitHub personal access token to the user's nbreport
-    configuration file.
-
-    Parameters
-    ----------
-    username : `str`
-        GitHub username.
-    token : `str`
-        GitHub personal access token belonging to the user.
-    note : `str`
-        Note to associate with the token.
-    path : `str`, optional
-        Path to the nbreport configuration file. By default this is located
-        at ``~/.nbreport.yaml``.
-    """
-    try:
-        config = read_config(path=path)
-    except FileNotFoundError:
-        config = create_empty_config()
-
-    config = insert_github_config(config, username, token, token_note=note)
-
-    write_config(config, path=path)
