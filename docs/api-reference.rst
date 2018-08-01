@@ -44,3 +44,15 @@ nbreport treats each cell's source as a Jinja template.
    :no-main-docstr:
    :no-heading:
    :no-inheritance-diagram:
+
+.. _nbreport.userconfig:
+
+nbreport.userconfig
+===================
+
+The ``nbreport.userconfig`` module provides interfaces to the ``~/.nbreport.yaml`` file, which is used to store GitHub credentials.
+
+.. automodapi:: nbreport.userconfig
+   :no-main-docstr:
+   :no-heading:
+   :no-inheritance-diagram:

@@ -7,12 +7,12 @@ __all__ = ('login',)
 import datetime
 from getpass import getuser
 from socket import gethostname
-from pathlib import Path
 
 import click
 import requests
-import ruamel.yaml
-from ruamel.yaml.comments import CommentedMap
+
+from ..userconfig import (read_config, create_empty_config,
+                          insert_github_config, write_config)
 
 
 @click.command()
@@ -149,22 +149,11 @@ def write_token(username, token, note, path=None):
         Path to the nbreport configuration file. By default this is located
         at ``~/.nbreport.yaml``.
     """
-    yaml = ruamel.yaml.YAML()  # round-trip mode.
+    try:
+        config = read_config(path=path)
+    except FileNotFoundError:
+        config = create_empty_config()
 
-    if path is None:
-        path = Path.home() / '.nbreport.yaml'
-    else:
-        path = Path(path)
+    config = insert_github_config(config, username, token, token_note=note)
 
-    if path.exists():
-        config_data = yaml.load(path)
-    else:
-        config_data = CommentedMap({'github': None})
-
-    config_data['github'] = CommentedMap({
-        'username': username,
-        'token': token
-    })
-    config_data['github'].yaml_add_eol_comment(note, 'token')
-
-    yaml.dump(config_data, path)
+    write_config(config, path=path)
