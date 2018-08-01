@@ -6,13 +6,13 @@ __all__ = ('test',)
 import logging
 import pathlib
 from tempfile import TemporaryDirectory
-from urllib.parse import urlparse
 
 import click
 
 from ..compute import compute_notebook_file
 from ..repo import ReportRepo
 from ..instance import ReportInstance
+from ..processing import is_url
 
 
 @click.command()
@@ -129,13 +129,3 @@ def _run(report_repo, instance_path, instance_id, template_variables,
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
     logger.debug('Computed notebook %s', instance.ipynb_path)
-
-
-def is_url(path_or_url):
-    """Test if the token represents a URL or a local path.
-    """
-    parts = urlparse(path_or_url)
-    if parts.scheme is not '':
-        return True
-    else:
-        return False
