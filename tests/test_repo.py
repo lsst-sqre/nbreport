@@ -67,6 +67,8 @@ def test_report_config_read():
     assert str(repo.config) == (
         'handle: TESTR-000\n'
         'title: Test Report\n'
+        'git_repo: https://github.com/lsst-sqre/nbreport\n'
+        'git_repo_subdir: tests/TESTR-000\n'
         'ipynb: TESTR-000.ipynb\n'
     )
 
