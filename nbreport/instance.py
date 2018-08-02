@@ -96,7 +96,9 @@ class ReportInstance:
         context : `dict`, optional
             Key-value pairs that override the default template context in
             the context file (``cookiecutter.json`,
-            `ReportInstance.context_path`).
+            `ReportInstance.context_path`). If `None` the notebook *is not*
+            rendered. If an empty dict, ``{}``, then the notebook is rendered
+            entirely with the default context.
         overwrite : `bool`, optional
             If `True`, an existing report instance directory will be deleted
             and replaced by the new report instance directory. Default is
@@ -133,11 +135,12 @@ class ReportInstance:
         instance.config['instance_handle'] = '{handle}-{instance_id}'.format(
             **instance.config)
 
-        instance._render(context=context)
+        if context is not None:
+            instance.render(context=context)
 
         return instance
 
-    def _render(self, context=None):
+    def render(self, context=None):
         """Render the notebook from the template in the notebook
 
         Parameters

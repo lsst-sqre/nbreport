@@ -47,7 +47,9 @@ def create_instance(report_repo, instance_id=None, template_variables=None,
         with the server.
     template_variables : `dict`, optional
         If provided, these key-value pairs are used to render the templated
-        notebook.
+        notebook. If `None`, the templated notebook *is not* rendered. If
+        an empty `dict`, the templated notebook is renderd but entirely with
+        defaults defined in ``cookiecutter.json``.
     instance_path : `str` or `pathlib.Path`, optional
         If provided, this is the directory of the report instance. Otherwise,
         a directory will be automatically created in the current working
