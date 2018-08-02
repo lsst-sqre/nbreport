@@ -12,7 +12,7 @@ from nbreport.repo import ReportRepo
 
 
 @responses.activate
-def test_register_command(write_user_config):
+def test_register_command(write_user_config, testr_000_path):
     """Test with no arguments except repo path.
     """
     responses.add(
@@ -23,16 +23,11 @@ def test_register_command(write_user_config):
               'product_url': 'https://keeper.lsst.codes/products/testr-000'},
         status=201)
 
-    original_repo_path = Path(__file__).parent / 'TESTR-000'
-    original_repo_path = original_repo_path.resolve()
-
     runner = CliRunner()
     with runner.isolated_filesystem():
         # copy the repo into this isolated workspace
         repo_path = Path.cwd() / 'TESTR-000'
-        shutil.copytree(
-            str(original_repo_path),
-            str(repo_path))
+        shutil.copytree(str(testr_000_path), str(repo_path))
         assert repo_path.exists()
 
         # Create a mock .nbreport.yaml file with auth data

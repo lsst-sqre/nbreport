@@ -1,8 +1,6 @@
 """Tests for the nbreport.templating module.
 """
 
-from pathlib import Path
-
 import nbformat
 import pytest
 
@@ -69,15 +67,14 @@ def test_render_notebook():
     'use_pathlib',
     [(True,), (False,)]
 )
-def test_load_template_environment_from_fs(use_pathlib):
+def test_load_template_environment_from_fs(use_pathlib, testr_000_path):
     """Test loading the template environment in tests/TESTR-000 using the
     ``cookiecutter.json`` file as context.
 
     Test passing the context file's path as both a pathlib.Path and as a
     string.
     """
-    base_dir = Path(__file__).parent / 'TESTR-000'
-    context_path = base_dir / 'cookiecutter.json'
+    context_path = testr_000_path / 'cookiecutter.json'
 
     if not use_pathlib:
         context_path = str(context_path)
@@ -98,16 +95,15 @@ def test_load_empty_template_environment():
     assert len(context['cookiecutter'].keys()) == 0
 
 
-def test_render_ipynb():
+def test_render_ipynb(testr_000_path):
     """Proof-of-concept for rendering the templated ipynb notebook in
     ``tests/TESTR-000/``.
 
     This test exercises obtaining a context from the cookiecutter.json file,
     and rendering a full ipynb given that context.
     """
-    base_dir = Path(__file__).parent / 'TESTR-000'
-    context_path = base_dir / 'cookiecutter.json'
-    ipynb_path = base_dir / 'TESTR-000.ipynb'
+    context_path = testr_000_path / 'cookiecutter.json'
+    ipynb_path = testr_000_path / 'TESTR-000.ipynb'
 
     context, jinja_env = load_template_environment(context_path=context_path)
     notebook = nbformat.read(str(ipynb_path.resolve()),

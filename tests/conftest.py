@@ -1,6 +1,8 @@
 """Pytest test fixtures.
 """
 
+from pathlib import Path
+
 import pytest
 
 
@@ -19,3 +21,10 @@ def write_user_config():
             fp.write(data)
 
     return _write_user_config
+
+
+@pytest.fixture()
+def testr_000_path():
+    """Path to the TESTR-000 report repository.
+    """
+    return Path(__file__).parent / 'TESTR-000'
