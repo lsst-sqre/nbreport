@@ -4,15 +4,13 @@
 __all__ = ('test',)
 
 import logging
-import pathlib
 from tempfile import TemporaryDirectory
 
 import click
 
 from ..compute import compute_notebook_file
 from ..repo import ReportRepo
-from ..instance import ReportInstance
-from ..processing import is_url
+from ..processing import is_url, create_instance
 
 
 @click.command()
@@ -103,28 +101,15 @@ def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
                 subdir=git_repo_subdir,
                 checkout=git_repo_ref
             )
-            _run(report_repo, instance_path, instance_id, template_variables,
-                 overwrite, timeout, kernel)
+            instance = create_instance(
+                report_repo, instance_path=instance_path,
+                instance_id=instance_id,
+                template_variables=template_variables, overwrite=overwrite)
     else:
         report_repo = ReportRepo(repo_path_or_url)
-        _run(report_repo, instance_path, instance_id, template_variables,
-             overwrite, timeout, kernel)
-
-
-def _run(report_repo, instance_path, instance_id, template_variables,
-         overwrite, timeout, kernel):
-    logger = logging.getLogger()
-
-    if instance_path is None:
-        instance_path = pathlib.Path(
-            '{0}-{1}'.format(str(report_repo.dirname.name), instance_id))
-    else:
-        instance_path = pathlib.Path(instance_path)
-
-    instance = ReportInstance.from_report_repo(
-        report_repo, instance_path, instance_id, overwrite=overwrite,
-        context=template_variables)
-    logger.debug('Created instance %s at %s', instance, instance_path)
+        instance = create_instance(
+            report_repo, instance_path=instance_path, instance_id=instance_id,
+            template_variables=template_variables, overwrite=overwrite)
 
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
