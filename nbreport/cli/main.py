@@ -11,6 +11,7 @@ import click
 from ..userconfig import read_config, get_config_path, create_empty_config
 from .login import login
 from .register import register
+from .init import init
 from .test import test
 
 
@@ -88,4 +89,5 @@ def help(ctx, topic, **kw):
 # Add subcommands from other modules
 main.add_command(login)
 main.add_command(register)
+main.add_command(init)
 main.add_command(test)

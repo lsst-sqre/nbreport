@@ -76,7 +76,8 @@ def create_instance(report_repo, instance_id=None, template_variables=None,
 
     if instance_id is None:
         # Register instance with server
-        instance_id = _reserve_instance(report_repo)
+        instance_id = _reserve_instance(report_repo, server, github_username,
+                                        github_token)
 
     if instance_path is None:
         instance_path = pathlib.Path(
