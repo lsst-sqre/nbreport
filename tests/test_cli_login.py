@@ -3,7 +3,6 @@
 
 from pathlib import Path
 
-from click.testing import CliRunner
 import pytest
 import responses
 
@@ -12,7 +11,7 @@ import nbreport.cli.main
 
 
 @responses.activate
-def test_login_command():
+def test_login_command(runner):
     """Test the nbreport login command (with mocks).
     """
     responses.add(
@@ -22,7 +21,6 @@ def test_login_command():
               'note': 'note for token'},
         status=201)
 
-    runner = CliRunner()
     with runner.isolated_filesystem():
         args = [
             '--config-file', 'nbreport.yaml',  # test-local config file

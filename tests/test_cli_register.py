@@ -4,7 +4,6 @@
 from pathlib import Path
 import shutil
 
-from click.testing import CliRunner
 import responses
 
 import nbreport.cli.main
@@ -12,7 +11,7 @@ from nbreport.repo import ReportRepo
 
 
 @responses.activate
-def test_register_command(write_user_config, testr_000_path):
+def test_register_command(write_user_config, testr_000_path, runner):
     """Test with no arguments except repo path.
     """
     responses.add(
@@ -23,7 +22,6 @@ def test_register_command(write_user_config, testr_000_path):
               'product_url': 'https://keeper.lsst.codes/products/testr-000'},
         status=201)
 
-    runner = CliRunner()
     with runner.isolated_filesystem():
         # copy the repo into this isolated workspace
         repo_path = Path.cwd() / 'TESTR-000'

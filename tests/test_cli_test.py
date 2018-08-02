@@ -1,17 +1,13 @@
 """Test the nbreport test CLI (nbreport.cli.test).
 """
 
-from click.testing import CliRunner
-
 import nbreport.cli.main
 from nbreport.instance import ReportInstance
 
 
-def test_basic(testr_000_path):
+def test_basic(testr_000_path, runner):
     """Test with no arguments except repo path.
     """
-    runner = CliRunner()
-
     with runner.isolated_filesystem():
         args = [
             'test',  # subcommand
@@ -22,11 +18,9 @@ def test_basic(testr_000_path):
         assert result.exit_code == 0
 
 
-def test_basic_with_dirname_arg(testr_000_path):
+def test_basic_with_dirname_arg(testr_000_path, runner):
     """Test with --id and -d arguments.
     """
-    runner = CliRunner()
-
     with runner.isolated_filesystem():
         args = [
             'test',  # subcommand
@@ -39,11 +33,9 @@ def test_basic_with_dirname_arg(testr_000_path):
         assert result.exit_code == 0
 
 
-def test_config_option(testr_000_path):
+def test_config_option(testr_000_path, runner):
     """Test with config (-c) options to configure the template rendering.
     """
-    runner = CliRunner()
-
     with runner.isolated_filesystem():
         args = [
             '--log-level', 'debug',
@@ -73,11 +65,9 @@ def test_config_option(testr_000_path):
         )
 
 
-def test_from_git_clone():
+def test_from_git_clone(runner):
     """Test creating an instance from a GitHub original repository.
     """
-    runner = CliRunner()
-
     with runner.isolated_filesystem():
         args = [
             '--log-level', 'debug',

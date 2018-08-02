@@ -3,6 +3,7 @@
 
 from pathlib import Path
 
+from click.testing import CliRunner
 import pytest
 
 
@@ -28,3 +29,10 @@ def testr_000_path():
     """Path to the TESTR-000 report repository.
     """
     return Path(__file__).parent / 'TESTR-000'
+
+
+@pytest.fixture()
+def runner():
+    """Click CliRunner for invoking a command in testing.
+    """
+    return CliRunner()
