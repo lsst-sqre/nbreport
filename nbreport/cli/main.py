@@ -9,6 +9,7 @@ from pathlib import Path
 import click
 
 from ..userconfig import read_config, get_config_path, create_empty_config
+from .compute import compute
 from .login import login
 from .register import register
 from .init import init
@@ -90,4 +91,5 @@ def help(ctx, topic, **kw):
 main.add_command(login)
 main.add_command(register)
 main.add_command(init)
+main.add_command(compute)
 main.add_command(test)

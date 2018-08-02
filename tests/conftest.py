@@ -28,7 +28,8 @@ def write_user_config():
 def testr_000_path():
     """Path to the TESTR-000 report repository.
     """
-    return Path(__file__).parent / 'TESTR-000'
+    path = Path(__file__).parent / 'TESTR-000'
+    return path.resolve()
 
 
 @pytest.fixture()
