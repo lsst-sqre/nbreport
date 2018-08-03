@@ -2,6 +2,15 @@
 Change log
 ##########
 
+0.5.1 (2018-08-03)
+==================
+
+- Add ``read:org`` role to the personal access token obtained by ``nbreport login``.
+  This role is necessary for the api.lsst.codes/nbreport service to _authorize_ a user based on their GitHub organization memberships.
+  The list of token roles is now ``read:org`` and ``read:user``.
+
+`DM-15199 <https://jira.lsstcorp.org/browse/DM-15199>`__.
+
 0.5.0 (2018-07-27)
 ==================
 

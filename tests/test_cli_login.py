@@ -28,6 +28,8 @@ def test_request_github_token():
     assert data['note'] == 'note for token'
     assert responses.calls[0].request.url \
         == 'https://api.github.com/authorizations'
+    assert b'read:user' in responses.calls[0].request.body
+    assert b'read:org' in responses.calls[0].request.body
 
 
 @responses.activate
