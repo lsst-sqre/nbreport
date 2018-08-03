@@ -14,6 +14,7 @@ from .login import login
 from .register import register
 from .init import init
 from .test import test
+from .upload import upload
 
 
 # Add -h as a help shortcut option
@@ -92,4 +93,5 @@ main.add_command(login)
 main.add_command(register)
 main.add_command(init)
 main.add_command(compute)
+main.add_command(upload)
 main.add_command(test)

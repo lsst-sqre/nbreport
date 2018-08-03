@@ -5,8 +5,10 @@ __all__ = ('ReportInstance',)
 
 from pathlib import Path
 import shutil
+from urllib.parse import urljoin
 
 import nbformat
+import requests
 
 from .repo import ReportConfig
 from .templating import render_notebook, load_template_environment
@@ -164,3 +166,43 @@ class ReportInstance:
         notebook = render_notebook(notebook, context, jinja_env)
 
         nbformat.write(notebook, str(self.ipynb_path))
+
+    def upload(self, *, github_username, github_token, server):
+        """Upload the notebook to the api.lsst.codes/nbreport service
+        for publication.
+
+        Parameters
+        ----------
+        github_username : `str`
+            User's GitHub username.
+        github_token : `str`
+            User's GitHub personal access token, for authentication with
+            the api.lsst.codes/nbreport service. ``nbreport login`` can obtain
+            this token.
+        server : `str`
+            URL of the nbreport API server.
+        """
+        url = urljoin(
+            server,
+            'nbreport/reports/{product}/instances/{instance}/notebook'.format(
+                product=self.config['ltd_product'],
+                instance=self.config['instance_id']))
+
+        headers = {
+            'Content-Type': 'application/x-ipynb+json'
+        }
+
+        with open(self.ipynb_path, 'rb') as fp:
+            nb_data = fp.read()
+
+        response = requests.post(
+            url,
+            headers=headers,
+            data=nb_data
+        )
+        response.raise_for_status()
+
+        data = response.json()
+
+        self.config['published_instance_url'] = data['published_url']
+        self.config['ltd_edition_url'] = data['ltd_edition_url']
