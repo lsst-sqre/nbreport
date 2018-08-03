@@ -13,6 +13,7 @@ from .compute import compute
 from .login import login
 from .register import register
 from .init import init
+from .issue import issue
 from .test import test
 from .upload import upload
 
@@ -94,4 +95,5 @@ main.add_command(register)
 main.add_command(init)
 main.add_command(compute)
 main.add_command(upload)
+main.add_command(issue)
 main.add_command(test)
