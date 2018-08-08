@@ -41,7 +41,6 @@ def test_config_option(testr_000_path, runner):
             '--log-level', 'debug',
             'test',  # subcommand
             str(testr_000_path),  # first argument
-            '-c', 'title', 'My sick report',
             '-c', 'a', '100',
             '-c', 'b', '200',
         ]
@@ -54,8 +53,8 @@ def test_config_option(testr_000_path, runner):
         nb = instance.open_notebook()
 
         assert nb.cells[0].source == (
-            "# My sick report\n"
-            "\n"
+            "**TESTR-000-test**\n\n"
+            "# Test Report\n\n"
             "- By: Test Bot\n"
             "- Date: 2018-07-18"
         )
@@ -75,7 +74,6 @@ def test_from_git_clone(runner):
             'https://github.com/lsst-sqre/nbreport',
             '--git-ref', 'master',
             '--git-subdir', 'tests/TESTR-000',
-            '-c', 'title', 'My sick report',
             '-c', 'a', '100',
             '-c', 'b', '200',
         ]

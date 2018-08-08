@@ -40,7 +40,6 @@ def test_init_command(write_user_config, testr_000_path, runner,
             '--config-file', '.nbreport.yaml',
             'init',  # subcommand
             str(repo_path),  # first argument
-            '-c', 'title', 'My sick report',
             '-c', 'a', '100',
             '-c', 'b', '200',
         ]
@@ -56,8 +55,6 @@ def test_init_command(write_user_config, testr_000_path, runner,
         # Check that the cookiecutter.json context got added to nbreport.yaml
         # This is just a sampling of the expected context
         assert 'context' in instance.config
-        assert instance.config['context']['cookiecutter']['title'] \
-            == 'My sick report'
         assert instance.config['context']['cookiecutter']['username'] \
             == 'Test Bot'
         assert instance.config['context']['cookiecutter']['a'] == '100'
@@ -67,8 +64,8 @@ def test_init_command(write_user_config, testr_000_path, runner,
 
         # Check that the cells got rendered
         assert nb.cells[0].source == (
-            "# My sick report\n"
-            "\n"
+            "**TESTR-000-1**\n\n"
+            "# Test Report\n\n"
             "- By: Test Bot\n"
             "- Date: 2018-07-18"
         )
@@ -120,7 +117,8 @@ def test_init_command_no_template_vars(
 
         nb = instance.open_notebook()
         assert nb.cells[0].source == (
-            "# {{ cookiecutter.title }}\n"
+            "**{{ instance_handle }}**\n\n"
+            "# {{ title }}\n"
             "\n"
             "- By: {{ cookiecutter.username }}\n"
             "- Date: {{ cookiecutter.generated_iso8601 }}"

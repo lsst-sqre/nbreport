@@ -48,7 +48,6 @@ def test_issue(write_user_config, testr_000_path, runner,
             '--config-file', '.nbreport.yaml',
             'issue',  # subcommand
             str(repo_path),  # first argument
-            '-c', 'title', 'My sick report',
             '-c', 'a', '100',
             '-c', 'b', '200',
         ]
@@ -65,8 +64,8 @@ def test_issue(write_user_config, testr_000_path, runner,
             upload_request.body.decode('utf-8'),
             as_version=nbformat.NO_CONVERT)
         assert nb.cells[0].source == (
-            "# My sick report\n"
-            "\n"
+            "**TESTR-000-1**\n\n"
+            "# Test Report\n\n"
             "- By: Test Bot\n"
             "- Date: 2018-07-18"
         )

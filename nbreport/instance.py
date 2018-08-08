@@ -3,6 +3,7 @@
 
 __all__ = ('ReportInstance',)
 
+import logging
 from pathlib import Path
 import shutil
 from urllib.parse import urljoin
@@ -25,6 +26,8 @@ class ReportInstance:
 
     def __init__(self, dirname):
         super().__init__()
+
+        self._logger = logging.getLogger(__name__)
 
         # Set and validate dirname
         if not isinstance(dirname, Path):
@@ -159,9 +162,27 @@ class ReportInstance:
         """
         notebook = self.open_notebook()
 
+        # Add some notebook metadata to the template context as "system"
+        # as opposed to the extra_context that comes from cookiecutter.json
+        system_context = {}
+        config_data = dict(self.config)  # optimization for bulk reading
+        copy_keys = ['handle', 'title', 'git_repo', 'git_repo_subdir',
+                     'instance_id', 'instance_handle']
+        for key in copy_keys:
+            try:
+                system_context[key] = config_data[key]
+            except KeyError:
+                msg = ('Missing nbreport.yaml config key %r; can\'t add it '
+                       'to the template context.')
+                self._logger.warning(msg)
+
+        print('extra_context')
+        print(context)
+
         context, jinja_env = load_template_environment(
             context_path=self.context_path,
-            extra_context=context)
+            extra_context=context,
+            system_context=system_context)
 
         # Add context to the config
         self.config.update({'context': context})
