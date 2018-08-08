@@ -163,7 +163,13 @@ class ReportInstance:
             context_path=self.context_path,
             extra_context=context)
 
+        # Add context to the config
+        self.config.update({'context': context})
+
         notebook = render_notebook(notebook, context, jinja_env)
+
+        # Add config to the notebook metadata
+        notebook.metadata.update({'nbreport': dict(self.config)})
 
         nbformat.write(notebook, str(self.ipynb_path))
 

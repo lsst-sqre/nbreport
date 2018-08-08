@@ -53,13 +53,29 @@ def test_init_command(write_user_config, testr_000_path, runner,
         assert instance.config['instance_id'] == '1'
         assert instance.config['instance_handle'] == 'TESTR-000-1'
 
+        # Check that the cookiecutter.json context got added to nbreport.yaml
+        # This is just a sampling of the expected context
+        assert 'context' in instance.config
+        assert instance.config['context']['cookiecutter']['title'] \
+            == 'My sick report'
+        assert instance.config['context']['cookiecutter']['username'] \
+            == 'Test Bot'
+        assert instance.config['context']['cookiecutter']['a'] == '100'
+        assert instance.config['context']['cookiecutter']['b'] == '200'
+
         nb = instance.open_notebook()
+
+        # Check that the cells got rendered
         assert nb.cells[0].source == (
             "# My sick report\n"
             "\n"
             "- By: Test Bot\n"
             "- Date: 2018-07-18"
         )
+
+        # Check that the instance config got added to the notebook metadata
+        # (sampling keys)
+        assert 'nbreport' in nb.metadata
 
 
 @responses.activate
