@@ -195,6 +195,22 @@ class ReportConfig:
         data[key] = value
         self._write(data)
 
+    def __contains__(self, key):
+        """Test if the configuration contains a key.
+
+        Parameters
+        ----------
+        key : `str`
+            Key.
+
+        Returns
+        -------
+        `bool`
+            `True` if the key is in the configuration. `False` otherwise.
+        """
+        data = self._read()
+        return key in data
+
     def keys(self):
         """Get the sequence of keys at the top-level of the configuration file.
 

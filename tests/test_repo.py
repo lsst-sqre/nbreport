@@ -99,3 +99,7 @@ def test_report_config_write(tmpdir):
     # Test __setitem__
     config['title'] = 'Revised Test Report'
     assert config['title'] == 'Revised Test Report'
+
+    # Test __contains__
+    assert 'title' in config
+    assert 'not-here' not in config
