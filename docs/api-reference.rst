@@ -16,6 +16,18 @@ The ``nbreport.compute`` module supports running Jupyter notebooks to compute ou
    :no-heading:
    :no-inheritance-diagram:
 
+.. _nbreport.processing:
+
+nbreport.processing
+===================
+
+The ``nbreport.processing`` module provides internal helpers for the command line apps.
+
+.. automodapi:: nbreport.processing
+   :no-main-docstr:
+   :no-heading:
+   :no-inheritance-diagram:
+
 .. _nbreport.repo:
 
 nbreport.repo
@@ -27,7 +39,6 @@ The ``nbreport.repo`` module provides APIs for managing report repositories.
    :no-main-docstr:
    :no-heading:
    :no-inheritance-diagram:
-   :skip: ReportConfig
 
 .. _nbreport.templating:
 
