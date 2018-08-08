@@ -3,10 +3,13 @@
 
 __all__ = ('ReportInstance',)
 
+import logging
 from pathlib import Path
 import shutil
+from urllib.parse import urljoin
 
 import nbformat
+import requests
 
 from .repo import ReportConfig
 from .templating import render_notebook, load_template_environment
@@ -23,6 +26,8 @@ class ReportInstance:
 
     def __init__(self, dirname):
         super().__init__()
+
+        self._logger = logging.getLogger(__name__)
 
         # Set and validate dirname
         if not isinstance(dirname, Path):
@@ -96,7 +101,9 @@ class ReportInstance:
         context : `dict`, optional
             Key-value pairs that override the default template context in
             the context file (``cookiecutter.json`,
-            `ReportInstance.context_path`).
+            `ReportInstance.context_path`). If `None` the notebook *is not*
+            rendered. If an empty dict, ``{}``, then the notebook is rendered
+            entirely with the default context.
         overwrite : `bool`, optional
             If `True`, an existing report instance directory will be deleted
             and replaced by the new report instance directory. Default is
@@ -133,11 +140,12 @@ class ReportInstance:
         instance.config['instance_handle'] = '{handle}-{instance_id}'.format(
             **instance.config)
 
-        instance._render(context=context)
+        if context is not None:
+            instance.render(context=context)
 
         return instance
 
-    def _render(self, context=None):
+    def render(self, context=None):
         """Render the notebook from the template in the notebook
 
         Parameters
@@ -154,10 +162,74 @@ class ReportInstance:
         """
         notebook = self.open_notebook()
 
+        # Add some notebook metadata to the template context as "system"
+        # as opposed to the extra_context that comes from cookiecutter.json
+        system_context = {}
+        config_data = dict(self.config)  # optimization for bulk reading
+        copy_keys = ['handle', 'title', 'git_repo', 'git_repo_subdir',
+                     'instance_id', 'instance_handle']
+        for key in copy_keys:
+            try:
+                system_context[key] = config_data[key]
+            except KeyError:
+                msg = ('Missing nbreport.yaml config key %r; can\'t add it '
+                       'to the template context.')
+                self._logger.warning(msg)
+
+        print('extra_context')
+        print(context)
+
         context, jinja_env = load_template_environment(
             context_path=self.context_path,
-            extra_context=context)
+            extra_context=context,
+            system_context=system_context)
+
+        # Add context to the config
+        self.config.update({'context': context})
 
         notebook = render_notebook(notebook, context, jinja_env)
 
+        # Add config to the notebook metadata
+        notebook.metadata.update({'nbreport': dict(self.config)})
+
         nbformat.write(notebook, str(self.ipynb_path))
+
+    def upload(self, *, github_username, github_token, server):
+        """Upload the notebook to the api.lsst.codes/nbreport service
+        for publication.
+
+        Parameters
+        ----------
+        github_username : `str`
+            User's GitHub username.
+        github_token : `str`
+            User's GitHub personal access token, for authentication with
+            the api.lsst.codes/nbreport service. ``nbreport login`` can obtain
+            this token.
+        server : `str`
+            URL of the nbreport API server.
+        """
+        url = urljoin(
+            server,
+            'nbreport/reports/{product}/instances/{instance}/notebook'.format(
+                product=self.config['ltd_product'],
+                instance=self.config['instance_id']))
+
+        headers = {
+            'Content-Type': 'application/x-ipynb+json'
+        }
+
+        with open(self.ipynb_path, 'rb') as fp:
+            nb_data = fp.read()
+
+        response = requests.post(
+            url,
+            headers=headers,
+            data=nb_data
+        )
+        response.raise_for_status()
+
+        data = response.json()
+
+        self.config['published_instance_url'] = data['published_url']
+        self.config['ltd_edition_url'] = data['ltd_edition_url']

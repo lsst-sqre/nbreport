@@ -10,15 +10,14 @@ from nbreport.instance import ReportInstance
 from nbreport.repo import ReportRepo
 
 
-def test_report_repo(tmpdir):
+def test_report_repo(tmpdir, testr_000_path):
     """Test ReportRepo on the ``/tests/TESTR-000`` path.
     """
-    repo_path = Path(__file__).parent / 'TESTR-000'
-    repo = ReportRepo(repo_path)
-
+    repo = ReportRepo(testr_000_path)
     instance_dirname = Path(str(tmpdir)) / 'TESTR-000-1'
 
-    instance = ReportInstance.from_report_repo(repo, instance_dirname, '1')
+    instance = ReportInstance.from_report_repo(
+        repo, instance_dirname, '1')
 
     assert instance.dirname == instance_dirname
     assert instance.dirname.exists()
@@ -32,11 +31,10 @@ def test_report_repo(tmpdir):
     assert instance2.dirname == instance_dirname
 
 
-def test_report_repo_overwrite(tmpdir):
+def test_report_repo_overwrite(tmpdir, testr_000_path):
     """Test modes for overwriting an existing instance directory.
     """
-    repo_path = Path(__file__).parent / 'TESTR-000'
-    repo = ReportRepo(repo_path)
+    repo = ReportRepo(testr_000_path)
     instance_dirname = Path(str(tmpdir)) / 'TESTR-000-1'
     instance = ReportInstance.from_report_repo(repo, instance_dirname, '1')
     assert instance.dirname == instance_dirname

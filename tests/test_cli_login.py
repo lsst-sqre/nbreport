@@ -7,7 +7,40 @@ import pytest
 import responses
 
 from nbreport.cli.login import request_github_token, GitHubTwoFactorRequired
-from nbreport.cli.login import write_token
+import nbreport.cli.main
+
+
+@responses.activate
+def test_login_command(runner):
+    """Test the nbreport login command (with mocks).
+    """
+    responses.add(
+        responses.POST,
+        'https://api.github.com/authorizations',
+        json={'token': 'mytoken',
+              'note': 'note for token'},
+        status=201)
+
+    with runner.isolated_filesystem():
+        args = [
+            '--config-file', 'nbreport.yaml',  # test-local config file
+            'login',  # subcommand
+            '--name', 'testuser',
+            '--password', 'testpassword'
+        ]
+        result = runner.invoke(nbreport.cli.main.main, args)
+        assert result.exit_code == 0
+
+        config_path = Path('nbreport.yaml')
+        assert config_path.exists()
+
+        with open(config_path) as fp:
+            config_text = fp.read()
+        assert config_text == (
+            'github:\n'
+            '  username: testuser\n'
+            '  token: mytoken  # note for token\n'
+        )
 
 
 @responses.activate
@@ -65,33 +98,3 @@ def test_request_github_token_with_2fa():
         == 'https://api.github.com/authorizations'
     assert data['token'] == 'mytoken'
     assert data['note'] == 'note for token'
-
-
-def test_write_token(tmpdir):
-    """Test writing and re-writing .nbreport.yaml with github auth info.
-    """
-    username = 'exampleuser'
-    token = 'example'
-    note = 'note example'
-    path = Path(tmpdir) / '.nbreport.yaml'
-
-    write_token(username, token, note, path=path)
-
-    with open(path) as fp:
-        config_text = fp.read()
-    assert config_text == (
-        'github:\n'
-        '  username: exampleuser\n'
-        '  token: example  # note example\n'
-    )
-
-    # Now re-write the token to ensure we can re-write one
-    write_token(username, 'newtoken', note, path=path)
-
-    with open(path) as fp:
-        config_text = fp.read()
-    assert config_text == (
-        'github:\n'
-        '  username: exampleuser\n'
-        '  token: newtoken  # note example\n'
-    )

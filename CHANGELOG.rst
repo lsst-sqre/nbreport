@@ -2,6 +2,34 @@
 Change log
 ##########
 
+0.6.0 (2018-08-08)
+==================
+
+- Several new commands were added that make the ``nbreport`` command line client fully functional:
+
+  - ``nbreport register`` command registers a report repo with LSST the Docs so that instances can be published.
+
+  - ``nbreport init`` command initializes a new report instance (by reserving a number with the API server and optionally rendering template variables).
+
+  - ``nbreport compute`` command computes a report instance's notebook.
+
+  - ``nbreport upload`` command uploads a report instance to the API server, which publishes it to LSST the Docs.
+
+  - ``nbreport issue`` command performs the equivalent of ``init``, ``compute``, and ``upload`` in a single step.
+
+- Key metadata from each instance ``nbreport.yaml`` file is not available as a Jinja template variable, namely: ``handle``, ``title``, ``git_repo``, ``git_repo_subdir``, ``instance_id``, ``instance_handle``.
+  These variables aren't part of the ``cookiecutter`` namespace and can't be overridden on the command line.
+
+- Metadata from ``nbreport.yaml``, as well as the final set of ``cookiecutter`` template variables, are included in the notebook files's metadata.
+  This provides a record of how the notebook was constructed, and will be used on the server to both render the notebook page and to provide filtering of notebooks.
+
+- Refactored code related to reading ``~/.nbreport.yaml`` out of the ``nbreport login`` command and into the ``nbreport.userconfig`` module.
+  The main command reads this file and passes data like the authentication token to subcommands.
+
+- Refactored ``create_instance()`` out of the ``nbreport test`` command and into ``nbreport.processing`` so that multiple subcommands (``init``, ``issue``) can consume it.
+
+`DM-15253 <https://jira.lsstcorp.org/browse/DM-15253>`__.
+
 0.5.1 (2018-08-03)
 ==================
 

@@ -76,7 +76,8 @@ def render_cell(cell, context, jinja_env):
 
 
 def load_template_environment(context_path=None,
-                              extra_context=None):
+                              extra_context=None,
+                              system_context=None):
     """Load the context (``cookiecutter.json``) and Jinja template environment.
 
     Parameters
@@ -93,6 +94,12 @@ def load_template_environment(context_path=None,
 
         If ``context_path`` is None, then the context is populated entirely
         from ``extra_context``.
+
+    system_context : `dict`, optional
+        A dictionary of key-value terms that are available to templates, but
+        outside the ``cookiecutter`` context. This argument is used by
+        `nbreport.instance.ReportInstance.render` to pass system metadata
+        from the ``nbreport.yaml`` file into the Jinja context.
 
     Returns
     -------
@@ -126,6 +133,12 @@ def load_template_environment(context_path=None,
         if extra_context is None:
             extra_context = {}
         context = dict(cookiecutter=extra_context)
+
+    if system_context is not None:
+        context.update(system_context)
+
+    print('created context')
+    print(context)
 
     # Also make the Jinja environment
     jinja_env = StrictEnvironment(

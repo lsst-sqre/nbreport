@@ -1,16 +1,15 @@
-"""Implementation of the nbreport test command.
+"""Implementation of the ``nbreport issue`` command.
 """
 
-__all__ = ('test',)
+__all__ = ('issue',)
 
-import logging
 from tempfile import TemporaryDirectory
 
 import click
 
-from ..compute import compute_notebook_file
-from ..repo import ReportRepo
-from ..processing import is_url, create_instance
+from nbreport.compute import compute_notebook_file
+from nbreport.processing import create_instance, is_url
+from nbreport.repo import ReportRepo
 
 
 @click.command()
@@ -28,15 +27,6 @@ from ..processing import is_url, create_instance
     help='Path of the report directory. By default, the report directory '
          'is created in the current working directory and is named '
          '{{handle}}-{{id}}.'
-)
-@click.option(
-    '--id', 'instance_id', type=str, default='test',
-    help='Identifier of the instance. By default, this is ``test``.'
-)
-@click.option(
-    '--overwrite/--no-overwrite', default=True,
-    help='Whether or not to overwrite an existing test instance. Overwriting '
-         'is enabled by default.'
 )
 @click.option(
     '--timeout', type=int, default=None,
@@ -60,38 +50,26 @@ from ..processing import is_url, create_instance
          '(branch or tag name).'
 )
 @click.pass_context
-def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
-         overwrite, timeout, kernel, git_repo_subdir, git_repo_ref):
-    """Test a notebook repository by instantiating and computing it, but
-    without publishing the result.
-
-    Use ``nbreport test`` when developing notebook repositories.
-    The ``nbreport test`` command does the following steps:
-
-    1. Instantiates a report istance from either a local report directory or
-       a report on GitHub.
-
-    2. Renders the template variables given defaults and user-provided
-       configurations (see the ``-c`` option).
-
-    3. Computes the notebook.
-
-    **Example**
-
-    .. code-block:: bash
-
-        nbreport test https://github.com/lsst-sqre/nbreport \
-          --git-subdir tests/TESTR-000 -c title "My first report"
+def issue(ctx, repo_path_or_url, template_variables, instance_path, timeout,
+          kernel, git_repo_subdir, git_repo_ref):
+    """Create, compute, and upload a report instance, all-in-one.
 
     **Required arguments**
 
-    ``REPO_PATH``
-        The path to the report repository directory.
+    ``REPO_PATH_OR_URL``
+        The path to the report repository directory on the file system **or**
+        the URL of a remote Git repository.
     """
-    logger = logging.getLogger()
-
     template_variables = dict(template_variables)
-    logger.debug('Template variables: %s', template_variables)
+
+    create_instance_args = {
+        'template_variables': template_variables,
+        'instance_path': instance_path,
+        'github_username': ctx.obj['config']['github']['username'],
+        'github_token': ctx.obj['config']['github']['token'],
+        'server': ctx.obj['server'],
+        'overwrite': False,
+    }
 
     if is_url(repo_path_or_url):
         with TemporaryDirectory() as tempdir:
@@ -101,16 +79,20 @@ def test(ctx, repo_path_or_url, template_variables, instance_path, instance_id,
                 subdir=git_repo_subdir,
                 checkout=git_repo_ref
             )
-            instance = create_instance(
-                report_repo, instance_path=instance_path,
-                instance_id=instance_id,
-                template_variables=template_variables, overwrite=overwrite)
+            instance = create_instance(report_repo, **create_instance_args)
     else:
         report_repo = ReportRepo(repo_path_or_url)
-        instance = create_instance(
-            report_repo, instance_path=instance_path, instance_id=instance_id,
-            template_variables=template_variables, overwrite=overwrite)
+        instance = create_instance(report_repo, **create_instance_args)
 
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
-    logger.debug('Computed notebook %s', instance.ipynb_path)
+
+    instance.upload(
+        github_username=ctx.obj['config']['github']['username'],
+        github_token=ctx.obj['config']['github']['token'],
+        server=ctx.obj['server'])
+
+    click.echo('Issued report instance {}.'.format(
+        instance.config['instance_handle']))
+    click.echo('Report is being published to {}'.format(
+        instance.config['published_instance_url']))

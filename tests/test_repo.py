@@ -9,27 +9,24 @@ import pytest
 from nbreport.repo import ReportRepo, ReportConfig
 
 
-def test_report_repo():
+def test_report_repo(testr_000_path):
     """Test ReportRepo on the ``/tests/TESTR-000`` path.
     """
-    repo_path = Path(__file__).parent / 'TESTR-000'
+    repo = ReportRepo(testr_000_path)
 
-    repo = ReportRepo(repo_path)
-
-    assert repo.dirname == repo_path
-    assert repo.context_path == repo_path / 'cookiecutter.json'
-    assert repo.config_path == repo_path / 'nbreport.yaml'
+    assert repo.dirname == testr_000_path
+    assert repo.context_path == testr_000_path / 'cookiecutter.json'
+    assert repo.config_path == testr_000_path / 'nbreport.yaml'
     assert isinstance(repo.config, ReportConfig)
     assert isinstance(repo.open_notebook(), nbformat.NotebookNode)
 
 
-def test_report_repo_from_str():
+def test_report_repo_from_str(testr_000_path):
     """Test creating a ReportRepo on the ``/tests/TESTR-000`` path from a
     string.
     """
-    repo_path = Path(__file__).parent / 'TESTR-000'
-    repo = ReportRepo(str(repo_path))
-    assert repo.dirname == repo_path
+    repo = ReportRepo(str(testr_000_path))
+    assert repo.dirname == testr_000_path
 
 
 def test_report_repo_not_found():
@@ -52,11 +49,10 @@ def test_report_repo_git_clone(tmpdir):
     assert repo.ipynb_path.exists()
 
 
-def test_report_config_read():
+def test_report_config_read(testr_000_path):
     """Test reading the ReportConfig using ``/tests/TESTR-000/nbreport.yaml``.
     """
-    repo_path = Path(__file__).parent / 'TESTR-000'
-    repo = ReportRepo(repo_path)
+    repo = ReportRepo(testr_000_path)
     assert repo.config['handle'] == 'TESTR-000'
     assert repo.config['title'] == 'Test Report'
     assert repo.config['ipynb'] == 'TESTR-000.ipynb'
@@ -67,6 +63,8 @@ def test_report_config_read():
     assert str(repo.config) == (
         'handle: TESTR-000\n'
         'title: Test Report\n'
+        'git_repo: https://github.com/lsst-sqre/nbreport\n'
+        'git_repo_subdir: tests/TESTR-000\n'
         'ipynb: TESTR-000.ipynb\n'
     )
 
@@ -101,3 +99,7 @@ def test_report_config_write(tmpdir):
     # Test __setitem__
     config['title'] = 'Revised Test Report'
     assert config['title'] == 'Revised Test Report'
+
+    # Test __contains__
+    assert 'title' in config
+    assert 'not-here' not in config
