@@ -58,11 +58,11 @@ def test_init_command(write_user_config, testr_000_path, runner,
 
         # Check that the cookiecutter.json context got added to nbreport.yaml
         # This is just a sampling of the expected context
-        assert 'context' in instance.config
-        assert instance.config['context']['cookiecutter']['username'] \
+        assert 'cookiecutter' in instance.config
+        assert instance.config['cookiecutter']['username'] \
             == 'Test Bot'
-        assert instance.config['context']['cookiecutter']['a'] == '100'
-        assert instance.config['context']['cookiecutter']['b'] == '200'
+        assert instance.config['cookiecutter']['a'] == '100'
+        assert instance.config['cookiecutter']['b'] == '200'
 
         nb = instance.open_notebook()
 

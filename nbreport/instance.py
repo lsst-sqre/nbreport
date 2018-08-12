@@ -183,16 +183,13 @@ class ReportInstance:
                        'to the template context.')
                 self._logger.warning(msg)
 
-        print('extra_context')
-        print(context)
-
         context, jinja_env = load_template_environment(
             context_path=self.context_path,
             extra_context=context,
             system_context=system_context)
 
-        # Add context to the config
-        self.config.update({'context': context})
+        # Add the cookiecutter context to the config
+        self.config.update({'cookiecutter': context['cookiecutter']})
 
         notebook = render_notebook(notebook, context, jinja_env)
 
