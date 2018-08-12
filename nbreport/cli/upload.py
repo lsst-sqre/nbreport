@@ -25,11 +25,11 @@ def upload(ctx, instance_path):
         must already be computed with the ``nbreport compute`` command.
     """
     instance = ReportInstance(instance_path)
-    instance.upload(
+    queue_url = instance.upload(
         github_username=ctx.obj['config']['github']['username'],
         github_token=ctx.obj['config']['github']['token'],
         server=ctx.obj['server'])
 
-    click.echo('Upload complete.')
-    click.echo('Report is being published to {}'.format(
+    click.echo('Upload complete. Status: {}'.format(queue_url))
+    click.echo('Report is being published to\n\n{}'.format(
         instance.config['published_instance_url']))

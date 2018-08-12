@@ -87,12 +87,13 @@ def issue(ctx, repo_path_or_url, template_variables, instance_path, timeout,
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
 
-    instance.upload(
+    queue_url = instance.upload(
         github_username=ctx.obj['config']['github']['username'],
         github_token=ctx.obj['config']['github']['token'],
         server=ctx.obj['server'])
 
     click.echo('Issued report instance {}.'.format(
         instance.config['instance_handle']))
+    click.echo('Upload complete. Status: {}'.format(queue_url))
     click.echo('Report is being published to {}'.format(
         instance.config['published_instance_url']))

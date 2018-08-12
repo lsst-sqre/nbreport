@@ -19,7 +19,11 @@ def test_init_command(write_user_config, testr_000_path, runner,
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/instances/',
-        json={'instance_id': '1'},
+        json={
+            'instance_id': '1',
+            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
+            'published_url': 'https://testr-000.lsst.io/v/1'
+        },
         status=201)
 
     with runner.isolated_filesystem():
@@ -84,7 +88,11 @@ def test_init_command_no_template_vars(
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/instances/',
-        json={'instance_id': '1'},
+        json={
+            'instance_id': '1',
+            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
+            'published_url': 'https://testr-000.lsst.io/v/1'
+        },
         status=201)
 
     with runner.isolated_filesystem():

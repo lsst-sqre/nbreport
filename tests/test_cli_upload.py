@@ -19,8 +19,7 @@ def test_upload(write_user_config, testr_000_path, runner, fake_registration):
         'https://api.lsst.codes/nbreport/reports/testr-000/'
         'instances/test/notebook',
         json={
-            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
-            'published_url': 'https://testr-000.lsst.io/v/test'
+            'queue_url': 'https://example.com/queue/12345'
         },
         status=202)
 
@@ -64,6 +63,3 @@ def test_upload(write_user_config, testr_000_path, runner, fake_registration):
         with open(instance.ipynb_path, 'rb') as fp:
             nbdata = fp.read()
             assert request.body == nbdata
-
-        assert instance.config['published_instance_url'] \
-            == 'https://testr-000.lsst.io/v/test'
