@@ -88,7 +88,7 @@ def _run_preprocessor(preprocessor, notebook, dirname):
     except CellExecutionError:
         uid = uuid.uuid4()
         output_path = Path('errored-{uid!s}.ipynb'.format(uid=uid)).resolve()
-        nbformat.write(notebook, output_path)
+        nbformat.write(notebook, str(output_path))
         message = (
             'Error executing the notebook. See the notebook'
             '\n\n\t{output_path!s}\n\n'
