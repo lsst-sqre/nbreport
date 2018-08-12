@@ -225,7 +225,8 @@ class ReportInstance:
         response = requests.post(
             url,
             headers=headers,
-            data=nb_data
+            data=nb_data,
+            auth=(github_username, github_token)
         )
         response.raise_for_status()
 
