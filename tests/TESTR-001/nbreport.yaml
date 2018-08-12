@@ -1,0 +1,8 @@
+handle: TESTR-001
+title: Characterization Metric Report Demo
+git_repo: https://github.com/lsst-sqre/nbreport
+git_repo_subdir: tests/TESTR-001
+ipynb: TESTR-001.ipynb
+ltd_product: testr-001
+published_url: https://testr-001.lsst.io
+ltd_url: https://keeper.lsst.codes/products/testr-001
