@@ -16,6 +16,7 @@ from .init import init
 from .issue import issue
 from .test import test
 from .upload import upload
+from .render import render
 
 
 # Add -h as a help shortcut option
@@ -93,6 +94,7 @@ def help(ctx, topic, **kw):
 main.add_command(login)
 main.add_command(register)
 main.add_command(init)
+main.add_command(render)
 main.add_command(compute)
 main.add_command(upload)
 main.add_command(issue)
