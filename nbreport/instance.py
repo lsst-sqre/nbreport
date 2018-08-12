@@ -194,7 +194,10 @@ class ReportInstance:
         notebook = render_notebook(notebook, context, jinja_env)
 
         # Add config to the notebook metadata
-        notebook.metadata.update({'nbreport': dict(self.config)})
+        # Need to remove ruamel.yaml's special typing to be JSON-serializable
+        config_dict = dict(self.config)
+        config_dict['cookiecutter'] = dict(config_dict['cookiecutter'])
+        notebook.metadata.update({'nbreport': config_dict})
 
         nbformat.write(notebook, str(self.ipynb_path))
 
