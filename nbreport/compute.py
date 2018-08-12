@@ -93,7 +93,7 @@ def _run_preprocessor(preprocessor, notebook, dirname):
             'Error executing the notebook. See the notebook'
             '\n\n\t{output_path!s}\n\n'
             'for the traceback.'
-        )
+        ).format(output_path=output_path)
         logger.error(message)
         raise
 
