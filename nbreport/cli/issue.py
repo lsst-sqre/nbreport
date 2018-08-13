@@ -94,6 +94,6 @@ def issue(ctx, repo_path_or_url, template_variables, instance_path, timeout,
 
     click.echo('Issued report instance {}.'.format(
         instance.config['instance_handle']))
-    click.echo('Upload complete. Status: {}'.format(queue_url))
-    click.echo('Report is being published to {}'.format(
+    click.echo('Processing status:\n  {}'.format(queue_url))
+    click.echo('Publication URL:\n  {}'.format(
         instance.config['published_instance_url']))

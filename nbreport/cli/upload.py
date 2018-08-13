@@ -30,6 +30,7 @@ def upload(ctx, instance_path):
         github_token=ctx.obj['config']['github']['token'],
         server=ctx.obj['server'])
 
-    click.echo('Upload complete. Status: {}'.format(queue_url))
-    click.echo('Report is being published to\n\n{}'.format(
+    click.echo('Upload complete.')
+    click.echo('Processing status:\n  {}'.format(queue_url))
+    click.echo('Publication URL:\n  {}'.format(
         instance.config['published_instance_url']))
