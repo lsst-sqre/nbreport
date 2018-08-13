@@ -19,15 +19,18 @@ def test_issue(write_user_config, testr_000_path, runner,
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/instances/',
-        json={'instance_id': '1'},
+        json={
+            'instance_id': '1',
+            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
+            'published_url': 'https://testr-000.lsst.io/v/1'
+        },
         status=201)
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/'
         'instances/1/notebook',
         json={
-            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
-            'published_url': 'https://testr-000.lsst.io/v/1'
+            'queue_url': 'https://example.com/queue/12345'
         },
         status=202)
 

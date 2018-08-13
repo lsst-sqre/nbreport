@@ -37,3 +37,4 @@ def compute(ctx, instance_path, timeout, kernel):
     instance = ReportInstance(instance_path)
     compute_notebook_file(instance.ipynb_path, timeout=timeout,
                           kernel_name=kernel)
+    click.echo('Complete.')

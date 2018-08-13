@@ -76,8 +76,11 @@ def create_instance(report_repo, instance_id=None, template_variables=None,
 
     if instance_id is None:
         # Register instance with server
-        instance_id = _reserve_instance(report_repo, server, github_username,
-                                        github_token)
+        instance_data = _reserve_instance(report_repo, server, github_username,
+                                          github_token)
+        instance_id = instance_data.pop('instance_id')
+    else:
+        instance_data = {}
 
     if instance_path is None:
         instance_path = pathlib.Path(
@@ -87,7 +90,7 @@ def create_instance(report_repo, instance_id=None, template_variables=None,
 
     instance = ReportInstance.from_report_repo(
         report_repo, instance_path, instance_id, overwrite=overwrite,
-        context=template_variables)
+        context=template_variables, **instance_data)
     logger.debug('Created instance %s at %s', instance, instance_path)
 
     return instance
@@ -111,8 +114,12 @@ def _reserve_instance(report_repo, server, github_username, github_token):
 
     Returns
     -------
-    instance_id : `str`
-        Instance identifier, which is a string corresponding to an integer.
+    instance_data : `dict`
+        Instance data, with keys:
+
+        - ``published_instance_url``
+        - ``ltd_edition_url``
+        - ``instance_id``
     """
     try:
         ltd_product = report_repo.config['ltd_product']
@@ -126,6 +133,10 @@ def _reserve_instance(report_repo, server, github_username, github_token):
         product=ltd_product))
     response = requests.post(url, auth=(github_username, github_token))
     response.raise_for_status()
-
-    instance_id = response.json()['instance_id']
-    return instance_id
+    data = response.json()
+    instance_data = {
+        'published_instance_url': data['published_url'],
+        'ltd_edition_url': data['ltd_edition_url'],
+        'instance_id': data['instance_id']
+    }
+    return instance_data

@@ -49,9 +49,9 @@ def register(ctx, repo_path):
 
     # Allow for user confirmation
     click.echo('Registering report with this metadata from nbreport.yaml:')
-    click.echo('\tHandle: {}'.format(handle))
-    click.echo('\tTitle: {}'.format(title))
-    click.echo('\tGit repository: {}'.format(git_repo))
+    click.echo('  Handle: {}'.format(handle))
+    click.echo('  Title: {}'.format(title))
+    click.echo('  Git repository: {}'.format(git_repo))
     click.confirm('Register this report?', abort=True)
 
     response = requests.post(

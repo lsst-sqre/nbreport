@@ -19,7 +19,11 @@ def test_init_command(write_user_config, testr_000_path, runner,
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/instances/',
-        json={'instance_id': '1'},
+        json={
+            'instance_id': '1',
+            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
+            'published_url': 'https://testr-000.lsst.io/v/1'
+        },
         status=201)
 
     with runner.isolated_filesystem():
@@ -54,11 +58,11 @@ def test_init_command(write_user_config, testr_000_path, runner,
 
         # Check that the cookiecutter.json context got added to nbreport.yaml
         # This is just a sampling of the expected context
-        assert 'context' in instance.config
-        assert instance.config['context']['cookiecutter']['username'] \
+        assert 'cookiecutter' in instance.config
+        assert instance.config['cookiecutter']['username'] \
             == 'Test Bot'
-        assert instance.config['context']['cookiecutter']['a'] == '100'
-        assert instance.config['context']['cookiecutter']['b'] == '200'
+        assert instance.config['cookiecutter']['a'] == '100'
+        assert instance.config['cookiecutter']['b'] == '200'
 
         nb = instance.open_notebook()
 
@@ -84,7 +88,11 @@ def test_init_command_no_template_vars(
     responses.add(
         responses.POST,
         'https://api.lsst.codes/nbreport/reports/testr-000/instances/',
-        json={'instance_id': '1'},
+        json={
+            'instance_id': '1',
+            'ltd_edition_url': 'https://keeper.lsst.codes/editions/12345',
+            'published_url': 'https://testr-000.lsst.io/v/1'
+        },
         status=201)
 
     with runner.isolated_filesystem():

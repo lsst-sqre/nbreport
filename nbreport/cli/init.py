@@ -102,5 +102,5 @@ def init(ctx, repo_path_or_url, template_variables, instance_path,
 
     if template_variables is None:
         click.echo(
-            'Run nbreport render {0!s} (with -c options) to render '
+            'Run\n  nbreport render {0!s}\n(with -c options) to render '
             'the instance’s templated cells.'.format(instance.dirname))

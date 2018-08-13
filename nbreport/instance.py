@@ -83,7 +83,8 @@ class ReportInstance:
 
     @classmethod
     def from_report_repo(self, report_repo, instance_dirname, instance_id,
-                         context=None, overwrite=False):
+                         context=None, overwrite=False,
+                         published_instance_url=None, ltd_edition_url=None):
         """Create a new instance of a report from a report repository.
 
         This creates the instance directory on the filesystem and renders
@@ -108,6 +109,10 @@ class ReportInstance:
             If `True`, an existing report instance directory will be deleted
             and replaced by the new report instance directory. Default is
             `False`.
+        published_instance_url : `str`, optional
+            URL where the instance is published on LSST the Docs.
+        ltd_edition_url : `str`, optional
+            URL of the instance's edition resource in the LSST the Docs API.
 
         Returns
         -------
@@ -139,6 +144,8 @@ class ReportInstance:
         instance.config['instance_id'] = instance_id
         instance.config['instance_handle'] = '{handle}-{instance_id}'.format(
             **instance.config)
+        instance.config['published_instance_url'] = published_instance_url
+        instance.config['ltd_edition_url'] = ltd_edition_url
 
         if context is not None:
             instance.render(context=context)
@@ -176,21 +183,21 @@ class ReportInstance:
                        'to the template context.')
                 self._logger.warning(msg)
 
-        print('extra_context')
-        print(context)
-
         context, jinja_env = load_template_environment(
             context_path=self.context_path,
             extra_context=context,
             system_context=system_context)
 
-        # Add context to the config
-        self.config.update({'context': context})
+        # Add the cookiecutter context to the config
+        self.config.update({'cookiecutter': context['cookiecutter']})
 
         notebook = render_notebook(notebook, context, jinja_env)
 
         # Add config to the notebook metadata
-        notebook.metadata.update({'nbreport': dict(self.config)})
+        # Need to remove ruamel.yaml's special typing to be JSON-serializable
+        config_dict = dict(self.config)
+        config_dict['cookiecutter'] = dict(config_dict['cookiecutter'])
+        notebook.metadata.update({'nbreport': config_dict})
 
         nbformat.write(notebook, str(self.ipynb_path))
 
@@ -208,6 +215,12 @@ class ReportInstance:
             this token.
         server : `str`
             URL of the nbreport API server.
+
+        Returns
+        -------
+        queue_url : `str`
+            URL to the nbreport API where you can obtain the status of a
+            report instance upload and publication.
         """
         url = urljoin(
             server,
@@ -225,11 +238,10 @@ class ReportInstance:
         response = requests.post(
             url,
             headers=headers,
-            data=nb_data
+            data=nb_data,
+            auth=(github_username, github_token)
         )
         response.raise_for_status()
 
         data = response.json()
-
-        self.config['published_instance_url'] = data['published_url']
-        self.config['ltd_edition_url'] = data['ltd_edition_url']
+        return data['queue_url']
