@@ -2,6 +2,35 @@
 Change log
 ##########
 
+0.7.0 (2018-08-12)
+==================
+
+This release fixes issues related to the integration of this ``nbreport`` command line client with the ``api.lsst.codes/nbreport`` backend microservice.
+
+*New features:*
+
+- Added the ``nbreport render`` command that renders the templated notebook of an initialized notebook instance that wasn't initially rendered (because no template variables were specified).
+
+- Improved user messages from commands.
+
+*Fixes:*
+
+- Fixed bugs in ``nbreport.compute``.
+
+- ``nbreport register`` now sends authentication data.
+
+- The instance URL (``published_instance_url``) and API URL (``ltd_edition_url``) are now obtained during instance initialization.
+  This matches when that data is readily available from the ``api.lsst.codes/nbreport`` backend microservice.
+
+- Replace ``context`` with ``cookiecutter`` in an instance's ``nbreport.yaml`` field.
+  By only reporting data from the ``cookiecutter`` template context in ``nbreport.yaml``, we avoid duplicating information that's copied into the template context, like ``instance_id`` and ``handle``.
+
+- More thoroughly cast config to JSON-serializable dict when inserting the ``nbreport.yaml`` instance metadata into the notebook's metadata.
+  In ruamel.yaml 0.15.52 (2018-08-09), the CommentedMap type is no longer a subclass of OrderedDict.
+  This meant that the configs were no longer JSON-serializable when directly inserted into notebook metadata.
+
+`DM-15416 <https://jira.lsstcorp.org/browse/DM-15416>`__.
+
 0.6.0 (2018-08-08)
 ==================
 
