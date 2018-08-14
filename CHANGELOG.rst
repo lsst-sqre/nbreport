@@ -2,6 +2,12 @@
 Change log
 ##########
 
+0.7.1 (2018-08-14)
+==================
+
+- For ``nbreport login``, now the user's GitHub username and password can *only* be provided through prompts.
+  Previously the password could be specified as a command-line option as well.
+
 0.7.0 (2018-08-12)
 ==================
 
