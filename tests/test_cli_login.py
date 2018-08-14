@@ -25,10 +25,11 @@ def test_login_command(runner):
         args = [
             '--config-file', 'nbreport.yaml',  # test-local config file
             'login',  # subcommand
-            '--name', 'testuser',
-            '--password', 'testpassword'
         ]
-        result = runner.invoke(nbreport.cli.main.main, args)
+        result = runner.invoke(
+            nbreport.cli.main.main,
+            args,
+            input='testuser\ntestpassword\n')
         assert result.exit_code == 0
 
         config_path = Path('nbreport.yaml')
