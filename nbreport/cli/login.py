@@ -15,18 +15,8 @@ from ..userconfig import insert_github_config, write_config
 
 
 @click.command()
-@click.option(
-    '--name', 'github_username', prompt='Your GitHub username',
-    help='Your GitHub username. You’ll be prompted for it if not provided '
-         'as an option.'
-)
-@click.password_option(
-    '--password', 'github_password', prompt='Your GitHub password',
-    help='Your GitHub username. You’ll be prompted for it if not provided '
-         'as an option.'
-)
 @click.pass_context
-def login(ctx, github_username, github_password):
+def login(ctx):
     """Obtain a personal access token from GitHub.
 
     Other nbreport subcommands that publish report instances authenticate
@@ -42,7 +32,10 @@ def login(ctx, github_username, github_password):
     personal access token created by this command by going to
     https://github.com/settings/tokens.
     """
-    click.echo('Getting a personal access token from GitHub.')
+    github_username = click.prompt('Your GitHub username')
+    github_password = click.prompt('Your GitHub password', hide_input=True)
+
+    click.echo('Getting a personal access token from GitHub...')
 
     try:
         token_data = request_github_token(
