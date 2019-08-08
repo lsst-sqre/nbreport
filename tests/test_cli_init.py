@@ -129,5 +129,5 @@ def test_init_command_no_template_vars(
             "# {{ title }}\n"
             "\n"
             "- By: {{ cookiecutter.username }}\n"
-            "- Date: {{ cookiecutter.generated_iso8601 }}"
+            "- Date: {{ cookiecutter.date }}"
         )

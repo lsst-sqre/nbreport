@@ -82,7 +82,7 @@ def test_load_template_environment_from_fs(use_pathlib, testr_000_path):
     context, jinja_env = load_template_environment(context_path=context_path)
 
     assert context['cookiecutter']['username'] == 'Test Bot'
-    assert context['cookiecutter']['generated_iso8601'] == '2018-07-18'
+    assert context['cookiecutter']['date'] == '2018-07-18'
     assert context['cookiecutter']['a'] == 10
     assert context['cookiecutter']['b'] == 32
 

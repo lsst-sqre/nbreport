@@ -24,10 +24,11 @@ This one-line command creates a test report instance:
 
 .. code-block:: bash
 
-   nbreport test https://github.com/lsst-sqre/nbreport --git-subdir tests/TESTR-000 -c title "My first report"
+   nbreport test https://github.com/lsst-sqre/nbreport --git-subdir tests/TESTR-000 \
+       -c username $USER -c date `date +"%F"` -c a 20
 
 This test command uses the `TESTR-000 example report repository`_ in this project's own Git repository.
-Next, it creates a new report instance called ``TESTR-000-test`` in your current working directory and configures the notebook so that the ``title`` variable is ``"My first report"``.
+Next, it creates a new report instance called ``TESTR-000-test`` in your current working directory and configures the values for three variables in the notebook template: ``username``, ``date``, and ``a``.
 Finally, the test command runs the notebook to generate outputs.
 
 Documentation
