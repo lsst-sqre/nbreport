@@ -2,6 +2,13 @@
 Change log
 ##########
 
+0.7.2 (2019-08-08)
+==================
+
+- Update test dependencies (pytest 5.0.1, pytest-cov 2.7.1, pytest-flake8 1.0.4, responses 0.10.6).
+- Update documentation dependencies (documenteer 0.5, sphinx-click 2.2.0).
+- Improve the "Try it out" experience.
+
 0.7.1 (2018-08-14)
 ==================
 
