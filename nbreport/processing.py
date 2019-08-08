@@ -27,7 +27,7 @@ def is_url(path_or_url):
         Returns `True` is the token is in fact a URL. `False` otherwise.
     """
     parts = urlparse(path_or_url)
-    if parts.scheme is not '':
+    if parts.scheme != '':
         return True
     else:
         return False

@@ -47,16 +47,16 @@ setup_requires = [
 
 # Test dependencies
 tests_require = [
-    'pytest==3.5.0',
-    'pytest-cov==2.5.1',
-    'pytest-flake8==1.0.0',
-    'responses==0.9.0',
+    'pytest==5.0.1',
+    'pytest-cov==2.7.1',
+    'pytest-flake8==1.0.4',
+    'responses==0.10.6',
 ]
 
 # Optional/development dependencies
 docs_require = [
-    'documenteer[pipelines]==0.3.0a5',
-    'sphinx-click>=1.2.0,<1.3.0',
+    'documenteer[pipelines]>=0.5.0,<0.6.0',
+    'sphinx-click==2.2.0',
 ]
 extras_require = {
     'dev': docs_require + tests_require
