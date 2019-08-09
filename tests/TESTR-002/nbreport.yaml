@@ -1,0 +1,12 @@
+handle: TESTR-002
+title: Assets demonstration
+git_repo: https://github.com/lsst-sqre/nbreport
+git_repo_subdir: tests/TESTR-002
+ipynb: TESTR-002.ipynb
+ltd_product: testr-002
+published_url: https://testr-002.lsst.io
+ltd_url: https://keeper.lsst.codes/products/testr-002
+assets:
+  - "assetmodule.py"
+  - "**/*.txt"
+  - "md"
