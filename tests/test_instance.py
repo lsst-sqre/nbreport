@@ -54,3 +54,22 @@ def test_instance_not_found():
     """
     with pytest.raises(OSError):
         ReportInstance('nonexistent')
+
+
+def test_asset_copy(tmpdir, testr_002_path):
+    """Test copying assets that come with the TESTR-002 demo repo.
+    """
+    repo = ReportRepo(testr_002_path)
+    instance_dirname = Path(str(tmpdir)) / 'TESTR-002-1'
+
+    ReportInstance.from_report_repo(
+        repo, instance_dirname, '1')
+
+    print(list(instance_dirname.glob('**/*')))
+    assert (instance_dirname / 'assetmodule.py').exists()
+    assert (instance_dirname / '1.txt').exists()
+    assert (instance_dirname / '2.txt').exists()
+    assert (instance_dirname / 'a/3.txt').exists()
+    assert (instance_dirname / 'a/b/4.txt').exists()
+    assert (instance_dirname / 'md/1.md').exists()
+    assert (instance_dirname / 'md/2.md').exists()
