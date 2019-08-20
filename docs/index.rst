@@ -35,8 +35,9 @@ Documentation
 =============
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
+   repository-guide/index
    cli-reference
    api-reference
    changelog
