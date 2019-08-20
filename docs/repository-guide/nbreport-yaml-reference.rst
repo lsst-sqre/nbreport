@@ -112,6 +112,10 @@ There are three types of rules that designate assets:
   In this example, any FITS file in the :file:`images` directory is designated as an asset.
   The second rule designates all CSV files as assets, regardless of what subdirectory contains them.
 
+.. seealso::
+
+   :doc:`how-to-use-python-modules`
+
 .. _yaml-git-repo:
 
 git\_repo (optional)
