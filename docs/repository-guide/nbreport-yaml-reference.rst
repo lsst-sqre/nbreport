@@ -110,6 +110,10 @@ There are three supported ways to designate assets:
   In this example, any FITS file in the :file:`images` directory is designated as an asset.
   All CSV files are also designated as assets.
 
+.. seealso::
+
+   :doc:`how-to-use-python-modules`
+
 .. _yaml-git-repo:
 
 git\_repo (optional)
