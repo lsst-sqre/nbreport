@@ -105,6 +105,35 @@ class ReportRepo:
         """
         return ReportConfig(self.config_path)
 
+    @property
+    def asset_paths(self):
+        """Paths to assets associated with a report template (`list` of
+        `pathlib.Path`).
+        """
+        try:
+            configured_paths = self.config['assets']
+        except KeyError:
+            return []
+
+        assetpaths = []
+        for configured_path in configured_paths:
+            # User provided a glob pattern
+            if '*' in configured_path:
+                new_paths = list(self.dirname.glob(configured_path))
+                assetpaths.extend(new_paths)
+            else:
+                configured_path = self.dirname / Path(configured_path)
+                if configured_path.is_dir():
+                    # When a directory is provided, automatically glob contents
+                    new_paths = list(configured_path.glob('**/*'))
+                    assetpaths.extend(new_paths)
+                else:
+                    # Path to a single file
+                    assetpaths.append(configured_path)
+
+        # Filter out directories
+        return [p for p in assetpaths if p.is_file()]
+
     def open_notebook(self):
         """Open the repository's notebook file.
 

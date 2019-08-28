@@ -33,6 +33,22 @@ def testr_000_path():
 
 
 @pytest.fixture()
+def testr_001_path():
+    """Path to the TESTR-001 report repository.
+    """
+    path = Path(__file__).parent / 'TESTR-001'
+    return path.resolve()
+
+
+@pytest.fixture()
+def testr_002_path():
+    """Path to the TESTR-002 report repository.
+    """
+    path = Path(__file__).parent / 'TESTR-002'
+    return path.resolve()
+
+
+@pytest.fixture()
 def runner():
     """Click CliRunner for invoking a command in testing.
     """

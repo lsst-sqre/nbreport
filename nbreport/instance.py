@@ -24,10 +24,10 @@ class ReportInstance:
         Path to the report instance directory.
     """
 
+    _logger = logging.getLogger(__name__)
+
     def __init__(self, dirname):
         super().__init__()
-
-        self._logger = logging.getLogger(__name__)
 
         # Set and validate dirname
         if not isinstance(dirname, Path):
@@ -137,8 +137,18 @@ class ReportInstance:
             report_repo.ipynb_path,
             report_repo.config_path
         ]
+        repo_paths.extend(report_repo.asset_paths)
         for source_path in repo_paths:
-            shutil.copy(source_path, instance_dirname / source_path.name)
+            if not source_path.exists():
+                self._logger.warning(
+                    'Configured asset %s does not exist (skipping)',
+                    source_path)
+                continue
+            dest_path = instance_dirname \
+                / source_path.relative_to(report_repo.dirname)
+            if not dest_path.parent.is_dir():
+                dest_path.parent.mkdir(parents=True)
+            shutil.copy(source_path, dest_path)
 
         instance = ReportInstance(instance_dirname)
         instance.config['instance_id'] = instance_id

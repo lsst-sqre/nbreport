@@ -19,6 +19,8 @@ def test_report_repo(testr_000_path):
     assert repo.config_path == testr_000_path / 'nbreport.yaml'
     assert isinstance(repo.config, ReportConfig)
     assert isinstance(repo.open_notebook(), nbformat.NotebookNode)
+    # This repo doesn't have assets
+    assert len(repo.asset_paths) == 0
 
 
 def test_report_repo_from_str(testr_000_path):
@@ -103,3 +105,18 @@ def test_report_config_write(tmpdir):
     # Test __contains__
     assert 'title' in config
     assert 'not-here' not in config
+
+
+def test_report_repo_asset_paths(testr_002_path):
+    """Test getting asset paths from a repo with lots of them.
+    """
+    repo = ReportRepo(testr_002_path)
+    asset_paths = repo.asset_paths
+
+    assert repo.dirname / 'assetmodule.py' in asset_paths
+    assert repo.dirname / '1.txt' in asset_paths
+    assert repo.dirname / '2.txt' in asset_paths
+    assert repo.dirname / 'a/3.txt' in asset_paths
+    assert repo.dirname / 'a/b/4.txt' in asset_paths
+    assert repo.dirname / 'md/1.md' in asset_paths
+    assert repo.dirname / 'md/2.md' in asset_paths
