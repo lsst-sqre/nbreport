@@ -2,6 +2,15 @@
 Change log
 ##########
 
+0.7.3 (2019-08-28)
+==================
+
+- New ``assets`` field in the ``nbreport.yaml`` configuration file lets a user specify files in the template repository that are meant to be copied into a report instance's directory.
+  Assets can be data files or Python modules that are needed for the report notebook to run.
+- Added reference documentation for the ``nbreport.yaml`` file and also added how-to pages related to assets.
+
+`DM-20954 <https://jira.lsstcorp.org/browse/DM-20954>`__.
+
 0.7.2 (2019-08-08)
 ==================
 
