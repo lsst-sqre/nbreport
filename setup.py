@@ -29,7 +29,7 @@ long_description = read('README.rst')
 
 # Core dependencies
 install_requires = [
-    'click>=6.7,<7.0',
+    'click',
     'cookiecutter>=1.6.0,<2.0.0',
     'nbformat',
     'nbconvert',
@@ -56,7 +56,7 @@ tests_require = [
 # Optional/development dependencies
 docs_require = [
     'documenteer[pipelines]>=0.5.0,<0.6.0',
-    'sphinx-click==2.2.0',
+    'sphinx-click',
 ]
 extras_require = {
     'dev': docs_require + tests_require

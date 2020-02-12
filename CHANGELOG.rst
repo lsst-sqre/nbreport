@@ -2,6 +2,12 @@
 Change log
 ##########
 
+0.7.4 (2019-02-12)
+==================
+
+- The ``click`` dependency is now floating.
+  The click API used by nbreport is fairly stable, and unpinning improves compatibility with other package's in the user's environment.
+
 0.7.3 (2019-08-28)
 ==================
 
