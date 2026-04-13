@@ -47,7 +47,7 @@ setup_requires = [
 
 # Test dependencies
 tests_require = [
-    'pytest==5.0.1',
+    'pytest==9.0.3',
     'pytest-cov==2.7.1',
     'pytest-flake8==1.0.4',
     'responses==0.10.6',
